@@ -10,26 +10,27 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.afollestad.aesthetic.Aesthetic;
 import com.simplecity.amp_library.R;
 import com.simplecity.amp_library.interfaces.FileType;
 import com.simplecity.amp_library.model.BaseFileObject;
 import com.simplecity.amp_library.model.FileObject;
 import com.simplecity.amp_library.model.FolderObject;
+import com.simplecity.amp_library.model.InclExclItem;
+import com.simplecity.amp_library.sql.databases.InclExclHelper;
 import com.simplecity.amp_library.ui.adapters.ViewType;
 import com.simplecity.amp_library.ui.views.CircleImageView;
 import com.simplecity.amp_library.utils.SettingsManager;
 import com.simplecity.amp_library.utils.StringUtils;
 import com.simplecityapps.recycler_adapter.recyclerview.BaseViewHolder;
-
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+public class FolderView extends BaseSelectableViewModel<FolderView.ViewHolder> {
 
-public class FolderView extends BaseSelectableViewModel<FolderView.ViewHolder, BaseFileObject> {
+    private static final String TAG = "FolderView";
 
     public interface ClickListener {
 
@@ -37,7 +38,7 @@ public class FolderView extends BaseSelectableViewModel<FolderView.ViewHolder, B
 
         void onFileObjectOverflowClick(View v, FolderView folderView);
 
-        void onFileObjectCheckboxClick(View v, FolderView folderView);
+        void onFileObjectCheckboxClick(CheckBox checkBox, FolderView folderView);
     }
 
     @NonNull
@@ -46,41 +47,80 @@ public class FolderView extends BaseSelectableViewModel<FolderView.ViewHolder, B
     @Nullable
     private ClickListener listener;
 
-    private boolean showCheckboxes;
+    private boolean showWhitelist;
+    private boolean showBlacklist;
 
-    public FolderView(@NonNull BaseFileObject baseFileObject) {
+    private boolean isWhitelisted;
+    private boolean isBlacklisted;
+
+    public FolderView(@NonNull BaseFileObject baseFileObject, boolean whitelisted, boolean blacklisted) {
         this.baseFileObject = baseFileObject;
+        this.isWhitelisted = whitelisted;
+        this.isBlacklisted = blacklisted;
     }
 
     public void setClickListener(@Nullable ClickListener listener) {
         this.listener = listener;
     }
 
-    public void setShowCheckboxes(boolean show) {
-        showCheckboxes = show;
+    public void setShowWhitelist(boolean showWhitelist) {
+        this.showWhitelist = showWhitelist;
+        if (showWhitelist) {
+            this.showBlacklist = false;
+        }
     }
 
-    @Override
-    public BaseFileObject getItem() {
-        return baseFileObject;
+    public void setShowBlacklist(boolean showBlacklist) {
+        this.showBlacklist = showBlacklist;
+        if (showBlacklist) {
+            this.showWhitelist = false;
+        }
     }
 
-    private void onClick(int position) {
+    void onClick(int position) {
         if (listener != null) {
             listener.onFileObjectClick(position, this);
         }
     }
 
-    private void onOverflowClick(View v) {
+    void onOverflowClick(View v) {
         if (listener != null) {
             listener.onFileObjectOverflowClick(v, this);
         }
     }
 
-    private void onCheckboxClick(CheckBox checkBox) {
-        setSelected(checkBox.isChecked());
+    void onCheckboxClick(CheckBox checkbox) {
+
+        setSelected(checkbox.isChecked());
+
+        if (showWhitelist) {
+            setWhitelisted(checkbox.isChecked());
+        }
+        if (showBlacklist) {
+            setBlacklisted(checkbox.isChecked());
+        }
         if (listener != null) {
-            listener.onFileObjectCheckboxClick(checkBox, this);
+            listener.onFileObjectCheckboxClick(checkbox, this);
+        }
+    }
+
+    public void setWhitelisted(boolean whitelisted) {
+        isWhitelisted = whitelisted;
+        InclExclItem inclExclItem = new InclExclItem(baseFileObject.path, InclExclItem.Type.INCLUDE);
+        if (whitelisted) {
+            InclExclHelper.addToInclExcl(inclExclItem);
+        } else {
+            InclExclHelper.deleteInclExclItem(inclExclItem);
+        }
+    }
+
+    public void setBlacklisted(boolean blacklisted) {
+        isBlacklisted = blacklisted;
+        InclExclItem inclExclItem = new InclExclItem(baseFileObject.path, InclExclItem.Type.EXCLUDE);
+        if (blacklisted) {
+            InclExclHelper.addToInclExcl(inclExclItem);
+        } else {
+            InclExclHelper.deleteInclExclItem(inclExclItem);
         }
     }
 
@@ -135,7 +175,7 @@ public class FolderView extends BaseSelectableViewModel<FolderView.ViewHolder, B
                 break;
         }
 
-        if (showCheckboxes && baseFileObject.fileType == FileType.FOLDER) {
+        if (showWhitelist || showBlacklist) {
             holder.checkBox.setVisibility(View.VISIBLE);
             holder.imageView.setVisibility(View.GONE);
         } else {
@@ -143,7 +183,7 @@ public class FolderView extends BaseSelectableViewModel<FolderView.ViewHolder, B
             holder.imageView.setVisibility(View.VISIBLE);
         }
 
-        holder.checkBox.setChecked(isSelected());
+        holder.checkBox.setChecked((showWhitelist && isWhitelisted) || (showBlacklist && isBlacklisted));
         holder.itemView.setActivated(false);
     }
 
@@ -160,7 +200,7 @@ public class FolderView extends BaseSelectableViewModel<FolderView.ViewHolder, B
             holder.textContainer.setVisibility(View.VISIBLE);
         }
 
-        if (showCheckboxes && baseFileObject.fileType == FileType.FOLDER) {
+        if (showWhitelist || showBlacklist) {
             holder.checkBox.setVisibility(View.VISIBLE);
             holder.imageView.setVisibility(View.GONE);
         } else {
@@ -168,7 +208,7 @@ public class FolderView extends BaseSelectableViewModel<FolderView.ViewHolder, B
             holder.imageView.setVisibility(View.VISIBLE);
         }
 
-        holder.checkBox.setChecked(isSelected());
+        holder.checkBox.setChecked((showWhitelist && isWhitelisted) || (showBlacklist && isBlacklisted));
         holder.itemView.setActivated(false);
     }
 
@@ -219,7 +259,7 @@ public class FolderView extends BaseSelectableViewModel<FolderView.ViewHolder, B
             int colorPrimary = Aesthetic.get(itemView.getContext()).colorPrimary().blockingFirst();
 
             folderDrawable = ContextCompat.getDrawable(itemView.getContext(), R.drawable.ic_folder_24dp);
-            parentFolderDrawable = ContextCompat.getDrawable(itemView.getContext(), R.drawable.ic_folder_open_24dp);
+            parentFolderDrawable = ContextCompat.getDrawable(itemView.getContext(), R.drawable.ic_folder_outline);
             fileDrawable = ContextCompat.getDrawable(itemView.getContext(), R.drawable.ic_headphones_white);
 
             imageView.setColorFilter(colorPrimary);
@@ -285,7 +325,7 @@ public class FolderView extends BaseSelectableViewModel<FolderView.ViewHolder, B
         if (!super.areContentsEqual(other)) return false;
 
         if (!baseFileObject.equals(((FolderView) other).baseFileObject)) return false;
-        if (isSelected() != ((FolderView) other).isSelected()) return false;
+        //        if (isSelected() != ((FolderView) other).isSelected()) return false;
         return true;
     }
 }

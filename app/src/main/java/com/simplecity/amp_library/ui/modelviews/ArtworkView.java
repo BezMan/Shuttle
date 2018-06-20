@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.StreamEncoder;
@@ -22,7 +21,6 @@ import com.simplecity.amp_library.model.ArtworkProvider;
 import com.simplecity.amp_library.ui.adapters.ViewType;
 import com.simplecityapps.recycler_adapter.model.BaseViewModel;
 import com.simplecityapps.recycler_adapter.recyclerview.BaseViewHolder;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
@@ -42,7 +40,7 @@ public class ArtworkView extends BaseViewModel<ArtworkView.ViewHolder> {
 
     private ArtworkProvider artworkProvider;
 
-    private GlideListener glideListener;
+    GlideListener glideListener;
 
     public File file;
 

@@ -174,10 +174,10 @@
     <string name="fav_add">Додати в вибрані</string>
     <!-- Context menu item -->
     <string name="play_selection">Відтворити</string>
+    <!-- Menu item-->
     <!-- Multi select menu item-->
     <!-- Multi select menu item-->
-    <!-- Multi select menu item-->
-    <!-- Context menu item -->
+    <!-- Artist overflow menu item-->
     <!-- Context menu item -->
     <string name="new_playlist">Новий</string>
     <!-- menu item to save the current list as a new playlist -->
@@ -226,6 +226,7 @@
     <string name="pref_category_navigation">Навігація</string>
     <!--Settings category for 'other' items -->
     <string name="pref_category_other">Інші</string>
+    <!--Settings category for 'playback' items -->
     <!--Settings title for opening the dialog to pick which categories are shown as tab headings -->
     <string name="pref_title_choose_tabs">Обрати елементи табу</string>
     <!--Settings summary for opening the dialog to pick which categories are shown as tab headings -->
@@ -315,6 +316,10 @@
     <!-- Settings summary for gmail style placeholders checkbox-->
     <string name="pref_summary_placeholders">Використовувати іконки в стилі \'Gmail\' за замовчуванням.
 Якщо не вибрано, - використовуватиметься іконка Shuttle</string>
+    <!-- Settings title for the enable lockscreen controls checkbox -->
+    <string name="pref_title_lockscreen">Увімкнути обкладинку на екрані блокуванні</string>
+    <!-- Settings summary for the enable lockscreen controls checkbox -->
+    <string name="pref_summary_lockscreen">Вмикає/вимикає обкладинку на екрані блокування</string>
     <!-- Settings title for the Display heading -->
     <string name="pref_title_display">Екран</string>
     <!-- Settings title for the keep screen on checkbox -->
@@ -358,6 +363,11 @@
     <!-- Settings title for the About heading -->
     <!-- Settings title for the Support heading -->
     <string name="pref_title_support">Підтримка</string>
+    <!-- Settings title for toggling between remaining time and total time -->
+    <!-- Settings summary for toggling between remaining time and total time -->
+    <!-- Settings title for the playback options -->
+    <!-- Settings title for toggling 'remember shuff'e-->
+    <!-- Settings summary for toggling 'remember shuff'e-->
     <string name="pref_title_version">Версія</string>
     <string name="pref_title_faq">Допомога</string>
     <string name="pref_summary_faq">Маєте питання? Потрібна допомога? Натисніть тут щоб переглянути статті \"питання-відповідь\" @ www.shuttlemusicplayer.com</string>
@@ -408,9 +418,7 @@
     <!-- Button text for saving tags  -->
     <string name="save">Зберегти</string>
     <!-- Message displayed when tag editing fails -->
-    <string name="tag_edit_error">Під час редагування тегів сталася помилка.</string>
-    <string name="tag_error_lollipop">Під час редагування тегів виникла помилка. Якщо цей файл розміщено на SD-карті, Shuttle не матиме до нього доступу.</string>
-    <string name="tag_error_kitkat">Під час редагування тегів виникла помилка. Файл розміщено на SD-карті? Якщо так, Google зробить можливим редагування цього файлу.</string>
+    <string name="tag_error">Помилка редагування тегів.</string>
     <string name="tag_editor_document_tree_message">У зв\'язку зі змінами в Android 5.0, Google потребує щоб ви визначили які теки додатку дозволено редагувати.\n\nShuttle зараз відкриє провідник. Будь ласка оберіть   теку файлів, які ви хочете змінити.</string>
     <string name="tag_editor_check_permission">Перевірка дозволів. Це займе момент...\n\nАвторство Google!</string>
     <string name="tag_editor_document_tree_permission_failed">Здається що Shuttle досі не має дозволу на редагування файлів. Двічі перевірте теку в провіднику.</string>
@@ -438,6 +446,7 @@
     <string name="parent_folder">Батьківська папка</string>
     <!-- -->
     <string name="show_filenames">Показувати назви файлів</string>
+    <!-- -->
     <!-- 'Scan'-->
     <string name="scan_file">Сканувати</string>
     <!-- Scan Complete-->
@@ -705,62 +714,6 @@
     <string name="shortcut_playlist_long_label">Відкрити Вибраний плейлист</string>
     <!-- "Playlist" Shortcut label disabled. Possibly shows if the playlist has been deleted.-->
     <string name="shortcut_playlist_disabled">Плейлист недоступний</string>
-    <!-- Displayed when an M3U playlist is being saved, but it already exists -->
-    <string name="playlist_save_exists">Плейлист вже існує</string>
-    <plurals name="NNNtracksdeleted">
-        <item quantity="one">1 композицію було видалено.</item>
-        <item quantity="other"><xliff:g id="songs_to_delete">%d</xliff:g> композиції було видалено.</item>
-        <item quantity="few"><xliff:g id="songs_to_delete">%d</xliff:g> композицій було видалено.</item>
-        <item quantity="many"><xliff:g id="songs_to_delete">%d</xliff:g> композицій було видалено.</item>
-    </plurals>
-    <plurals name="NNNtrackstofavourites">
-        <item quantity="one">1 композицію додано у вибрані.</item>
-        <item quantity="other"><xliff:g example="27" id="number">%d</xliff:g> композиції додано у вибрані.</item>
-        <item quantity="few"><xliff:g example="27" id="number">%d</xliff:g> композицій додано у вибрані.</item>
-        <item quantity="many"><xliff:g example="27" id="number">%d</xliff:g> композицій додано у вибрані.</item>
-    </plurals>
-    <!-- Displays when a restart is required due to a change (themes etc) -->
-    <string name="restart_tite">Необхідно перезавантаження</string>
-    <!-- Displays when a restart is required due to a change (themes etc) -->
-    <string name="restart_message">Для того щоб зміни вступили в силу потрібно перезавантажити Shuttle</string>
-    <!-- Displayed in the color picker dialog, to choose a 'custom' color -->
-    <string name="dialog_custom">Свій</string>
-    <!-- Context menu item -->
-    <string name="add_to_playlist">Додати в плейлист</string>
-    <!-- Context menu item to remove the selected item from the playlist -->
-    <string name="remove_from_playlist">Видалити з плейлисту</string>
-    <!-- -->
-    <string name="share_title">Поділитися</string>
-    <!-- Playlist context menu item to delete the selected playlist. -->
-    <string name="delete_playlist_menu">Видалити</string>
-    <!--Settings title for white accent color) -->
-    <string name="pref_title_theme_white_accent">Використовувати білий акцент</string>
-    <!--Settings summary for white accent color-->
-    <string name="pref_summary_theme_white_accent">Використовує білий для всіх кольорових акцентів, виключаючи ті, які повинні відображати стан (тасування та повтор потребують кольору відмінного від білого щоб показати, що вони увімкнені)</string>
-    <!--Settings summary for the downloading more themes -->
-    <string name="pref_summary_get_pro_themes">Більше тем доступно в Shuttle+</string>
-    <!--Settings title for clearing whitelist-->
-    <string name="pref_title_update_whitelist">Оновлення</string>
-    <!-- Settings title for the enable lockscreen controls checkbox -->
-    <string name="pref_title_lockscreen">Увімкнути обкладинку на екрані блокуванні</string>
-    <!-- Settings summary for the enable lockscreen controls checkbox -->
-    <string name="pref_summary_lockscreen">Вмикає/вимикає обкладинку на екрані блокування</string>
-    <!-- Settings title for the About heading -->
-    <string name="pref_title_about">Звітування змін</string>
-    <!-- Default name of artist that doesn't have a name in the metadata -->
-    <string name="unknown_artist_name">Невідомий виконавець</string>
-    <!-- Default name of album artist that doesn't have a name in the metadata -->
-    <string name="unknown_album_name">Невідомий альбом</string>
-    <!-- Default name of genre that doesn't have a name in the metadata -->
-    <string name="unknown_genre_name">Невідомий жанр</string>
-    <!-- Default name of album artist that doesn't have a name in the metadata -->
-    <string name="unknown_album_artist_name">Невідомий виконавець альбому</string>
-    <!-- Accessibility button description -->
-    <string name="btn_queue">Переглянути чергу відтворення</string>
-    <!-- Accessibility button description -->
-    <string name="btn_show_queue">Показати чергу</string>
-    <!-- Accessibility 'show lyrics' -->
-    <string name="btn_show_lyrics">Показати слова</string>
-    <string name="toast_purchase_failed">Щось пішло не так. Будь ласка, спробуйте ще раз пізніше..</string>
-    <string name="search_title_only">Тільки назва</string>
+    <!-- Displayed at the top of the album list, album shuffle mode-->
+    <!-- Storage Access Framework (Used when deleting files from SD CarD)-->
 </resources>

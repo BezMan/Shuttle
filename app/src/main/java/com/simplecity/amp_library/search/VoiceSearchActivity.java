@@ -6,21 +6,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.widget.Toast;
-
 import com.annimon.stream.Stream;
 import com.simplecity.amp_library.model.Album;
 import com.simplecity.amp_library.model.AlbumArtist;
 import com.simplecity.amp_library.ui.activities.BaseActivity;
+import com.simplecity.amp_library.ui.activities.MainActivity;
 import com.simplecity.amp_library.utils.ComparisonUtils;
 import com.simplecity.amp_library.utils.DataManager;
 import com.simplecity.amp_library.utils.LogUtils;
-import com.simplecity.amp_library.utils.MusicUtils;
-
-import java.util.Collections;
-import java.util.Locale;
-
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import java.util.Collections;
+import java.util.Locale;
+import kotlin.Unit;
 
 import static com.simplecity.amp_library.utils.StringUtils.containsIgnoreCase;
 
@@ -30,7 +28,7 @@ public class VoiceSearchActivity extends BaseActivity {
 
     private String filterString;
 
-    private Intent mIntent;
+    private Intent intent;
 
     private int position = -1;
 
@@ -38,15 +36,15 @@ public class VoiceSearchActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mIntent = getIntent();
+        intent = getIntent();
 
-        filterString = mIntent.getStringExtra(SearchManager.QUERY);
+        filterString = intent.getStringExtra(SearchManager.QUERY);
     }
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         super.onServiceConnected(name, service);
-        if (mIntent != null && mIntent.getAction() != null && mIntent.getAction().equals("android.media.action.MEDIA_PLAY_FROM_SEARCH")) {
+        if (intent != null && intent.getAction() != null && intent.getAction().equals("android.media.action.MEDIA_PLAY_FROM_SEARCH")) {
             searchAndPlaySongs();
         }
     }
@@ -69,7 +67,6 @@ public class VoiceSearchActivity extends BaseActivity {
                     Collections.sort(songs, (a, b) -> ComparisonUtils.compareInt(a.discNumber, b.discNumber));
                     return songs;
                 });
-
 
         //Search for album-artists, albums & songs matching our filter. Then, create an Observable emitting List<Song> for each type of result.
         //Then we concat the results, and return the first one which is non-empty. Order is important here, we want album-artist first, if it's
@@ -124,11 +121,18 @@ public class VoiceSearchActivity extends BaseActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(songs -> {
                     if (songs != null) {
-                        MusicUtils.playAll(songs, position, (String message) ->
-                                Toast.makeText(this, message, Toast.LENGTH_SHORT).show());
+                        mediaManager.playAll(songs, position, true, message -> {
+                            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                            return Unit.INSTANCE;
+                        });
+                        startActivity(new Intent(this, MainActivity.class));
                     }
                     finish();
-                }, error -> LogUtils.logException(TAG, "Error attempting to playAll()", error));
+                }, error -> {
+                    LogUtils.logException(TAG, "Error attempting to playAll()", error);
+                    startActivity(new Intent(this, MainActivity.class));
+                    finish();
+                });
     }
 
     @Override

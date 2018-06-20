@@ -3,7 +3,6 @@ package com.simplecity.amp_library.ui.modelviews;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.simplecity.amp_library.R;
@@ -17,9 +16,7 @@ public class SuggestedSongView extends MultiItemView<SuggestedSongView.ViewHolde
 
         void onSongClick(Song song, ViewHolder holder);
 
-        boolean onSongLongClick(Song song);
-
-        void onSongOverflowClicked(View v, Song song);
+        void onSongOverflowClicked(View v, int position, Song song);
     }
 
     public Song song;
@@ -34,15 +31,15 @@ public class SuggestedSongView extends MultiItemView<SuggestedSongView.ViewHolde
         this.requestManager = requestManager;
     }
 
-    private void onItemClick(ViewHolder holder) {
+    void onItemClick(ViewHolder holder) {
         if (listener != null) {
             listener.onSongClick(song, holder);
         }
     }
 
-    private void onOverflowClick(View v) {
+    void onOverflowClick(View v, ViewHolder viewHolder) {
         if (listener != null) {
-            listener.onSongOverflowClicked(v, song);
+            listener.onSongOverflowClicked(v, viewHolder.getAdapterPosition(), song);
         }
     }
 
@@ -58,11 +55,6 @@ public class SuggestedSongView extends MultiItemView<SuggestedSongView.ViewHolde
     @Override
     public int getViewType() {
         return ViewType.SUGGESTED_SONG;
-    }
-
-    @Override
-    public Song getItem() {
-        return song;
     }
 
     @Override
@@ -114,7 +106,7 @@ public class SuggestedSongView extends MultiItemView<SuggestedSongView.ViewHolde
 
             itemView.setOnClickListener(v -> viewModel.onItemClick(this));
 
-            overflowButton.setOnClickListener(v -> viewModel.onOverflowClick(v));
+            overflowButton.setOnClickListener(v -> viewModel.onOverflowClick(v, this));
         }
     }
 }

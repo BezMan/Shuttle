@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- ## Toast Messages ## -->
     <!-- Shown when a user attempts to edit tags, but they don't have a 'DocumentProvider' available to pick the directory of their music (and thus give permission to Shuttle)-->
-    <string name="R.string.toast_no_document_provider">이 권한 요청을 처리할 문서 제공자가 없습니다.</string>
+    <string name="R.string.toast_no_document_provider">이 권한 요청을 처리할 DocumentProvider가 없습니다.</string>
     <!-- Displayed when an M3U playlist is being saved, but it already exists -->
     <!-- Displayed when an M3U playlist save fails -->
     <string name="playlist_save_failed">재생 목록을 저장할 수 없습니다.</string>
@@ -97,6 +97,7 @@
         \n• 폴더 브라우징
         \n• ChromeCast 지원
         \n\n추가적인 개발에도 도움이 됩니다.\n\nShuttle+를 이미 가지고 계신다면 업그레이드하실 필요가 없습니다.</string>
+    <string name="upgrade_required_folders">Shuttle+ 로 업그레이드하기</string>
     <string name="btn_upgrade">업그레이드</string>
     <!-- -->
     <string name="get_pro_button_no">아니오</string>
@@ -169,13 +170,14 @@
     <string name="fav_add">즐겨찾기</string>
     <!-- Context menu item -->
     <string name="play_selection">재생</string>
-    <!-- Multi select menu item-->
+    <!-- Menu item-->
     <string name="menu_add_to">다음으로 추가...</string>
     <!-- Multi select menu item-->
     <string name="menu_playlist">재생 목록</string>
     <!-- Multi select menu item-->
     <string name="menu_queue">대기열</string>
-    <!-- Context menu item -->
+    <!-- Artist overflow menu item-->
+    <string name="menu_album_shuffle">앨범 랜덤 재생</string>
     <!-- Context menu item -->
     <string name="new_playlist">새로 만들기</string>
     <!-- menu item to save the current list as a new playlist -->
@@ -225,6 +227,7 @@
     <string name="pref_category_navigation">내비게이션</string>
     <!--Settings category for 'other' items -->
     <string name="pref_category_other">기타</string>
+    <!--Settings category for 'playback' items -->
     <!--Settings title for opening the dialog to pick which categories are shown as tab headings -->
     <string name="pref_title_choose_tabs">탭 항목 선택</string>
     <!--Settings summary for opening the dialog to pick which categories are shown as tab headings -->
@@ -318,6 +321,10 @@
     <!-- Settings summary for gmail style placeholders checkbox-->
     <string name="pref_summary_placeholders">Gmail 스타일 플레이스 홀더를 사용합니다.
         이 항목을 비활성화하면 Gmail식 첫 글자 플레이스 홀더 대신 Shuttle 아이콘을 사용합니다.</string>
+    <!-- Settings title for the enable lockscreen controls checkbox -->
+    <string name="pref_title_lockscreen">잠금 화면 앨범아트 활성화</string>
+    <!-- Settings summary for the enable lockscreen controls checkbox -->
+    <string name="pref_summary_lockscreen">잠금 화면에 앨범아트를 표시합니다.</string>
     <!-- Settings title for the Display heading -->
     <string name="pref_title_display">화면</string>
     <!-- Settings title for the keep screen on checkbox -->
@@ -362,6 +369,13 @@
     <string name="pref_title_changelog">변경 사항</string>
     <!-- Settings title for the Support heading -->
     <string name="pref_title_support">지원</string>
+    <!-- Settings title for toggling between remaining time and total time -->
+    <string name="pref_title_display_remaining_time">남은 시간 표시</string>
+    <!-- Settings summary for toggling between remaining time and total time -->
+    <!-- Settings title for the playback options -->
+    <!-- Settings title for toggling 'remember shuff'e-->
+    <string name="pref_title_remember_shuffle">셔플 모드 기억하기</string>
+    <!-- Settings summary for toggling 'remember shuff'e-->
     <string name="pref_title_version">버전</string>
     <string name="pref_title_faq">FAQ</string>
     <string name="pref_summary_faq">질문이 있거나 도움이 필요하십니까? 여기를 누르시면 www.shuttlemusicplayer.com의 FAQ 페이지로 이동합니다</string>
@@ -419,9 +433,7 @@
     <!-- Button text for saving tags  -->
     <string name="save">저장</string>
     <!-- Message displayed when tag editing fails -->
-    <string name="tag_edit_error">태그를 수정하는 중에 오류가 발생했습니다.</string>
-    <string name="tag_error_lollipop">태그를 수정하는 중에 오류가 발생했습니다. 파일이 SD 카드에 저장되어 있다면 Shuttle이 접근 권한을 얻지 못했을 수도 있습니다.</string>
-    <string name="tag_error_kitkat">태그를 수정하는 중에 오류가 발생했습니다. 파일이 SD 카드에 저장되어 있나요? 그렇다면 Google 정책에 의해 이 파일의 태그를 수정할 수 없습니다.</string>
+    <string name="tag_error">태그를 수정하는 중에 오류가 발생했습니다.</string>
     <string name="tag_editor_document_tree_message">Android 5.0에서의 Google 정책의 변경 사항으로, 앱이 SD 카드의 특정 폴더에 접근하여 수정할 수 있게 되었습니다.\n\nShuttle에서 파일 탐색기를 열 것입니다. 수정을 원하는 파일들이 있는 상위 폴더를 선택해주세요.</string>
     <string name="tag_editor_check_permission">권한을 확인 중입니다. 시간이 걸릴 수 있습니다…\n\nGoogle 떄문!</string>
     <string name="tag_editor_document_tree_permission_failed">파일을 수정하기 위한 권한이 여전히 Shuttle에 주어지지 않은 것 같습니다. 파일 관리자에서 폴더를 다시 확인해주세요.</string>
@@ -445,6 +457,7 @@
     <string name="parent_folder">상위 폴더</string>
     <!-- -->
     <string name="show_filenames">파일 이름 보기</string>
+    <!-- -->
     <!-- 'Scan'-->
     <string name="scan_file">스캔</string>
     <!-- Scan Complete-->
@@ -719,64 +732,7 @@
     <string name="shortcut_playlist_long_label">즐겨찾는 재생 목록 열기</string>
     <!-- "Playlist" Shortcut label disabled. Possibly shows if the playlist has been deleted.-->
     <string name="shortcut_playlist_disabled">재생 목록 사용 불가</string>
-    <!-- Displayed when an M3U playlist is being saved, but it already exists -->
-    <string name="playlist_save_exists">재생 목록이 이미 존재합니다.</string>
-    <plurals name="NNNtracksdeleted">
-        <item quantity="other"><xliff:g id="songs_to_delete">%d</xliff:g>개의 노래가 삭제되었습니다.</item>
-    </plurals>
-    <plurals name="NNNtrackstofavourites">
-        <item quantity="other"><xliff:g example="27" id="number">%d</xliff:g>개의 노래가 즐겨찾기에 추가되었습니다.</item>
-    </plurals>
-    <!-- Displays when a restart is required due to a change (themes etc) -->
-    <string name="restart_tite">앱 재시작 필요</string>
-    <!-- Displays when a restart is required due to a change (themes etc) -->
-    <string name="restart_message">이 변경 사항은 Shuttle을 재시작해야 적용됩니다.</string>
-    <!-- Displayed in the color picker dialog, to choose a 'custom' color -->
-    <string name="dialog_custom">사용자 지정</string>
-    <!-- Context menu item -->
-    <string name="add_to_playlist">재생 목록</string>
-    <!-- Context menu item to remove the selected item from the playlist -->
-    <string name="remove_from_playlist">재생 목록에서 삭제</string>
-    <!-- -->
-    <string name="share_title">공유</string>
-    <!-- Playlist context menu item to delete the selected playlist. -->
-    <string name="delete_playlist_menu">삭제</string>
-    <!--Settings title for white accent color) -->
-    <string name="pref_title_theme_white_accent">강조 색상으로 흰색 사용</string>
-    <!--Settings summary for white accent color-->
-    <string name="pref_summary_theme_white_accent">필요한 곳을 제외한 모든 강조되는 부분을 흰색으로 사용합니다. (랜덤 재생 및 반복 버튼은 켜진 상태를 표시하기 위하여 다른 색상이 필요합니다)</string>
-    <!--Settings category for 'notification' items -->
-    <string name="pref_category_notif_drawer">알림 표시창</string>
-    <!-- Settings title for inverting the notification drawer text & icons -->
-    <string name="pref_title_invert_notif_icons">알림 아이콘/글자 반전</string>
-    <!--Settings summary for the downloading more themes -->
-    <string name="pref_summary_get_pro_themes">Shuttle+에서 더 많은 테마를 사용할 수 있습니다.</string>
-    <!--Settings title for clearing whitelist-->
-    <string name="pref_title_update_whitelist">업데이트</string>
-    <!-- Settings title for the enable lockscreen controls checkbox -->
-    <string name="pref_title_lockscreen">잠금 화면 앨범아트 활성화</string>
-    <!-- Settings summary for the enable lockscreen controls checkbox -->
-    <string name="pref_summary_lockscreen">잠금 화면에 앨범아트를 표시합니다.</string>
-    <!-- Settings title for the About heading -->
-    <string name="pref_title_about">변경 사항</string>
-    <!-- Sleep timer "set" -->
-    <string name="sleep_timer_set">설정</string>
-    <!-- Sleep timer "Set time..." -->
-    <string name="sleep_timer_set_time">시간 설정...</string>
-    <!-- Default name of artist that doesn't have a name in the metadata -->
-    <string name="unknown_artist_name">알 수 없는 아티스트</string>
-    <!-- Default name of album artist that doesn't have a name in the metadata -->
-    <string name="unknown_album_name">알 수 없는 앨범</string>
-    <!-- Default name of genre that doesn't have a name in the metadata -->
-    <string name="unknown_genre_name">알 수 없는 장르</string>
-    <!-- Default name of album artist that doesn't have a name in the metadata -->
-    <string name="unknown_album_artist_name">알 수 없는 앨범 아티스트</string>
-    <!-- Accessibility button description -->
-    <string name="btn_queue">재생 대기열 보기</string>
-    <!-- Accessibility button description -->
-    <string name="btn_show_queue">대기열 보기</string>
-    <!-- Accessibility 'show lyrics' -->
-    <string name="btn_show_lyrics">자막 보기</string>
-    <string name="toast_purchase_failed">뭔가가 잘못되었습니다. 나중에 다시 시도해 주세요..</string>
-    <string name="search_title_only">제목만</string>
+    <!-- Displayed at the top of the album list, album shuffle mode-->
+    <string name="shuffle_albums">앨범 랜덤 재생</string>
+    <!-- Storage Access Framework (Used when deleting files from SD CarD)-->
 </resources>

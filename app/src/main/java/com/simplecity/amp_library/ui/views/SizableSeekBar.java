@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.SeekBar;
-
 import com.afollestad.aesthetic.AestheticSeekBar;
 
 public class SizableSeekBar extends AestheticSeekBar {
@@ -17,10 +16,10 @@ public class SizableSeekBar extends AestheticSeekBar {
 
     private static final float maxThumbSizeRatio = 2.0f;
 
-    private float currentThumbSizeRatio = 1.0f;
-    private OnSeekBarChangeListener seekListener;
+    float currentThumbSizeRatio = 1.0f;
+    OnSeekBarChangeListener seekListener;
     private Drawable pendingThumb;
-    private Drawable thumb;
+    Drawable thumb;
     private ValueAnimator thumbGrowAnimator;
     private ValueAnimator thumbShrinkAnimator;
     private AccelerateDecelerateInterpolator interpolator = new AccelerateDecelerateInterpolator();
@@ -48,7 +47,6 @@ public class SizableSeekBar extends AestheticSeekBar {
         thumbGrowAnimator.addUpdateListener(mAnimatorListener);
         thumbGrowAnimator.setDuration(300);
         thumbGrowAnimator.start();
-
     }
 
     void startThumbShrinkAnimation() {
@@ -103,21 +101,24 @@ public class SizableSeekBar extends AestheticSeekBar {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             startThumbShrinkAnimation();
-            if (seekListener != null)
+            if (seekListener != null) {
                 seekListener.onStopTrackingTouch(SizableSeekBar.this);
+            }
         }
 
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
             startThumbGrowAnimation();
-            if (seekListener != null)
+            if (seekListener != null) {
                 seekListener.onStartTrackingTouch(SizableSeekBar.this);
+            }
         }
 
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if (seekListener != null)
+            if (seekListener != null) {
                 seekListener.onProgressChanged(SizableSeekBar.this, progress, fromUser);
+            }
         }
     };
 }

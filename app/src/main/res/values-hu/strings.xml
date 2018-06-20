@@ -166,10 +166,10 @@
     <string name="fav_add">Kedvenc</string>
     <!-- Context menu item -->
     <string name="play_selection">Lejátszás</string>
+    <!-- Menu item-->
     <!-- Multi select menu item-->
     <!-- Multi select menu item-->
-    <!-- Multi select menu item-->
-    <!-- Context menu item -->
+    <!-- Artist overflow menu item-->
     <!-- Context menu item -->
     <string name="new_playlist">Új</string>
     <!-- menu item to save the current list as a new playlist -->
@@ -218,6 +218,7 @@
     <string name="pref_category_navigation">Navigáció</string>
     <!--Settings category for 'other' items -->
     <string name="pref_category_other">További beállítások</string>
+    <!--Settings category for 'playback' items -->
     <!--Settings title for opening the dialog to pick which categories are shown as tab headings -->
     <string name="pref_title_choose_tabs">Fülek elemei</string>
     <!--Settings summary for opening the dialog to pick which categories are shown as tab headings -->
@@ -305,6 +306,10 @@
     <string name="pref_title_placeholders">Gmail stílusű helykitöltők</string>
     <!-- Settings summary for gmail style placeholders checkbox-->
     <string name="pref_summary_placeholders">\'Gmail\' stílusű helykitöltők használata. Ha ki van kapcsolva, egy Shuttle ikon jelenik meg helykitöltőként.</string>
+    <!-- Settings title for the enable lockscreen controls checkbox -->
+    <string name="pref_title_lockscreen">Képernyőzári borítókép engedélyezése</string>
+    <!-- Settings summary for the enable lockscreen controls checkbox -->
+    <string name="pref_summary_lockscreen">Be/Kikapcsolja a borítókép megjelenítését a záróképernyőn</string>
     <!-- Settings title for the Display heading -->
     <string name="pref_title_display">Megjelenítés</string>
     <!-- Settings title for the keep screen on checkbox -->
@@ -352,6 +357,11 @@ segítségével
     <!-- Settings title for the About heading -->
     <!-- Settings title for the Support heading -->
     <string name="pref_title_support">Támogatás</string>
+    <!-- Settings title for toggling between remaining time and total time -->
+    <!-- Settings summary for toggling between remaining time and total time -->
+    <!-- Settings title for the playback options -->
+    <!-- Settings title for toggling 'remember shuff'e-->
+    <!-- Settings summary for toggling 'remember shuff'e-->
     <string name="pref_title_version">Verzió</string>
     <string name="pref_title_faq">GYIK</string>
     <string name="pref_summary_faq">Kérdése van? Segítségre van szüksége? GYIK a www.shuttlemusicplayer.com -on</string>
@@ -405,9 +415,7 @@ segítségével
     <!-- Button text for saving tags  -->
     <string name="save">Mentés</string>
     <!-- Message displayed when tag editing fails -->
-    <string name="tag_edit_error">Hiba történt a címkék szerkesztése közben</string>
-    <string name="tag_error_lollipop">Hiba történt a címkék szerkesztése közben. Ha a fájlok az SD kártyán találhatóak, akkor lehet hogy a Shuttle-nek nincs engedélye hozzáférni.</string>
-    <string name="tag_error_kitkat">Hiba történt a címkék szerkesztése közben. Ha a fájlok az SD kártyán vannak, akkor a szerkesztésük nem lehetséges a Google miatt.</string>
+    <string name="tag_error">Hiba történt a címkék szerkesztése közben.</string>
     <string name="tag_editor_document_tree_message">Az Android 5.0-ban bevezetett változtatások miatt, meg kell adnia azt a mappát, amiben a Shuttle módosításokat hajthat végre.\n\nMost megnyílik egy fájlkezelő. Válassza ki azt a mappát, amiben azok a fájlok vannak amiket szerkeszteni szeretne.</string>
     <string name="tag_editor_check_permission">Engedélyek ellenőrzése. Ez eltarthat egy darabig...\n\nA Google-t hibáztassa!</string>
     <string name="tag_editor_document_tree_permission_failed">Nincs hozzáférési engedély a fájlok módosításához. Ellenőrizze a megadott mappát.</string>
@@ -437,6 +445,7 @@ segítségével
     <string name="parent_folder">Fő mappa</string>
     <!-- -->
     <string name="show_filenames">Fájlnevek mutatása</string>
+    <!-- -->
     <!-- 'Scan'-->
     <string name="scan_file">Keresés</string>
     <!-- Scan Complete-->
@@ -694,56 +703,6 @@ segítségével
     <!-- "Playlist" Shortcut long label. Max 25 characters.-->
     <!-- "Playlist" Shortcut label disabled. Possibly shows if the playlist has been deleted.-->
     <string name="shortcut_playlist_disabled">Lejátszási lista nem érhető el</string>
-    <!-- Displayed when an M3U playlist is being saved, but it already exists -->
-    <string name="playlist_save_exists">A lejátszási lista már létezik.</string>
-    <plurals name="NNNtracksdeleted">
-        <item quantity="one">1 dal törölve.</item>
-        <item quantity="other"><xliff:g id="SONGS_TO_DELETE">%d</xliff:g> dal törlésre került.</item>
-    </plurals>
-    <plurals name="NNNtrackstofavourites">
-        <item quantity="one">dal hozzáadva a kedvencekhez</item>
-        <item quantity="other"><xliff:g example="27" id="number">%d</xliff:g> dal hozzáadva a kedvencekhez</item>
-    </plurals>
-    <!-- Displays when a restart is required due to a change (themes etc) -->
-    <string name="restart_tite">Újraindítás szükséges</string>
-    <!-- Displays when a restart is required due to a change (themes etc) -->
-    <string name="restart_message">Ezek a változások nem lépnek életbe, amíg nem indítod újra a lejátszót</string>
-    <!-- Displayed in the color picker dialog, to choose a 'custom' color -->
-    <string name="dialog_custom">Egyedi</string>
-    <!-- Context menu item -->
-    <string name="add_to_playlist">Lejátszási lista</string>
-    <!-- Context menu item to remove the selected item from the playlist -->
-    <string name="remove_from_playlist">Eltávolítás a lejátszási listából</string>
-    <!-- -->
-    <string name="share_title">Megosztás</string>
-    <!-- Playlist context menu item to delete the selected playlist. -->
-    <string name="delete_playlist_menu">Törlés</string>
-    <!--Settings title for white accent color) -->
-    <string name="pref_title_theme_white_accent">Fehér színséma</string>
-    <!--Settings summary for white accent color-->
-    <string name="pref_summary_theme_white_accent">Mindenhol a fehér színséma lesz alkalmazva, kivéve azokat a helyeket ahol állapotokat is jelezni kell (pl.: véletlenszerű lejátszás kapcsolója más színű lesz, ha be van kapcsolva)</string>
-    <!--Settings category for 'notification' items -->
-    <string name="pref_category_notif_drawer">Értesítési sáv</string>
-    <!-- Settings title for inverting the notification drawer text & icons -->
-    <string name="pref_title_invert_notif_icons">Értesítési ikonok/szövegek invertálása</string>
-    <!--Settings summary for the downloading more themes -->
-    <string name="pref_summary_get_pro_themes">A Shuttle+ megvásárlásával további témák érhetők el</string>
-    <!--Settings title for clearing whitelist-->
-    <string name="pref_title_update_whitelist">Frissítés</string>
-    <!-- Settings title for the enable lockscreen controls checkbox -->
-    <string name="pref_title_lockscreen">Képernyőzári borítókép engedélyezése</string>
-    <!-- Settings summary for the enable lockscreen controls checkbox -->
-    <string name="pref_summary_lockscreen">Be/Kikapcsolja a borítókép megjelenítését a záróképernyőn</string>
-    <!-- Settings title for the About heading -->
-    <string name="pref_title_about">Változások listája</string>
-    <!-- Default name of artist that doesn't have a name in the metadata -->
-    <string name="unknown_artist_name">Ismeretlen előadó</string>
-    <!-- Default name of album artist that doesn't have a name in the metadata -->
-    <string name="unknown_album_name">Ismeretlen album</string>
-    <!-- Default name of genre that doesn't have a name in the metadata -->
-    <string name="unknown_genre_name">Ismeretlen műfaj</string>
-    <!-- Default name of album artist that doesn't have a name in the metadata -->
-    <string name="unknown_album_artist_name">Ismeretlen album előadó</string>
-    <!-- Accessibility button description -->
-    <string name="btn_queue">Lejátszási sor nézet</string>
+    <!-- Displayed at the top of the album list, album shuffle mode-->
+    <!-- Storage Access Framework (Used when deleting files from SD CarD)-->
 </resources>

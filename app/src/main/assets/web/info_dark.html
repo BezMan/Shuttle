@@ -8,120 +8,139 @@
 </head>
 
 <body>
-<h4>2.0.0-beta10</h4>
+<h4>2.0.5-beta4</h4>
 <ul>
-    <li>Actually don't require app restart when changing tab items</li>
-    <li>When turning off 'use color from artwork', previosuly selected theme is restored</li>
-    <li>Fixed crash when rotating device</li>
-    <li>Fixed crash when sharing song (sharing may still fail, but app won't crash)</li>
-    <li>Fixed crash when starting app from headset button</li>
+    <li>Fixed a crash when moving to landscape mode</li>
+    <li>Some improvements to new colour scheme & animations</li>
 </ul>
-<h4>2.0.0-beta9</h4>
+<h4>2.0.5-beta3</h4>
 <ul>
-    <li>Fixed an issue where mini-player would display when changing themes</li>
-    <li>Don't require app restart when changing tab items</li>
-    <li>Fixed an issue where shuffle button disappeared when returning to artists screen</li>
-    <li>Fixed a theme issue when setting custom time for sleep timer</li>
+    <li>Improved artwork based colour selection. Shuttle now chooses nicer colours from the artwork, and themes the text and buttons on the now playing screen accordingly.</li>
+    <li>Some improvements to the queue. No longer 'flashes' when the queue changes. Drag & drop is smoother now.</li>
+    <li>'Play Next' in queue now moves the song to the next position instead of duplicating the song into the queue</li>
+    <li>Added number of songs & total time to queue</li>
+    <li>Added total time to album, artist & genre detail screens</li>
+    <li>Possible fix for USB-C headphones not pausing when disconnected</li>
+    <li>Various crash fixes</li>
+    <li>Fixed an issue where the shuffle icon wasn't shown when shuffle was on</li>
+    <li>Fixed an issue where whitelisting a file also blacklisted it</li>
+    <li>Fixed an issue where genres couldn't be added to playlists</li>
+    <li>Fixed an issue where date added order was ignored in recently added playlist</li>
+</ul>
+<h4>2.0.5-beta2</h4>
+<ul>
+    <li>Fixed several crashes</li>
+</ul>
+<h4>2.0.5-beta1</h4>r
+<ul>
+    <li>Updated to a fresh, more subtle mini-player</li>
+    <li>Added option to display artwork in song list. On by default.</li>
+    <li>Don't show podcasts in various song listings. Podcasts now only show up in the 'podcast' playlist.</li>
+    <li>Fixed an issue where various menu options triggered incorrect actions</li>
+    <li>Display number of songs and duration in playlist detail view</li>
+    <li>Don't show albums in playlist detail view</li>
+    <li>Lots of behind the scenes improvements</li>
+</ul>
+<h4>2.0.4</h4>
+<ul>
+    <li>Fixed a bug where 'play next' didn't work with songs on artist/album/playlist/genre screens</li>
+    <li>Added play next to multi-select menu</li>
+    <li>Added play next to overflow menu for artist, album, genre & playlist detail screens</li>
+    <li>Reinstated batch-delete from queue</li>
+    <li>Bumped minimum Android version to Lollipop (21)</li>
+    <li>Added a launch task which attempts fix the 'year' of songs/albums in the MediaStore, if the year is present in the id3/vorbis tags</li>
+    <li>Fixed an issue where some tasks started when the app is launching, instead of waiting a few seconds. (Improves launch time)</li>
+    <li>Fixed an issue where 'play next' on an item in the queue caused it to play after the next track</li>
+    <li>Use https for networking calls</li>
     <li>Updated translations</li>
 </ul>
-<h4>2.0.0-beta8</h4>
+<h4>2.0.3</h4>
 <ul>
-    <li>Fixed an issue where Gallery wouldn't open for custom artwork</li>
-    <li>Added 'toggle favourite' option from notification</li>
-    <li>Sort playlists by playlist order (except for 'most played')</li>
-    <li>Reinstated drag-to-sort playlist items</li>
+    <li>Reinstated SD card file deletion (Lollipop+)</li>
+    <li>Added ability to quickly set, remove, and navigate to a specified home directory when folder browsing</li>
+    <li>When a home directory is specified, the back button won't navigate past that directory</li>
+    <li>Fixed an issue where back button didn't work correctly when displaying folder browser in tabs</li>
+    <li>Added ability to batch remove songs from the queue</li>
+    <li>Fixed a bug causing the CAB (thingy that appears at the top of the screen when you long press stuff) to remain open after performing an action</li>
+    <li>Translation updates</li>
+    <li>Crash fixes</li>
 </ul>
-<h4>2.0.0-beta7</h4>
+<h4>2.0.2</h4>
 <ul>
-    <li>Fixed 'empty playlist' &amp; related issues on Android O, when returning app from background while music isn't playing</li>
-    <li>Fixed an issue where 'add to new playlist' would cause app to hang</li>
-    <li>Reinstated option to remove items from playlist</li>
-    <li>Fixed changelog button colour issue</li>
-    <li>Fixed an issue where sort order of playlists would get messed up in navigation drawer</li>
+    <li>Fixed an issue where playback randomly paused due to changes to nearby bluetooth devices</li>
+    <li>Fixed an issue where bitrate &amp; other song info didn't show up</li>
+    <li>Various crash fixes</li>
 </ul>
-<h4>2.0.0-beta6</h4>
+<h4>2.0.1</h4>
+<ul>
+    <li>Lowered translation threshold. Translations need to be only 70% complete to make it into Shuttle.
+        </p>
+        </p>
+        Calling all translators: <a href="https://www.shuttle.oneskyapp.com">Shuttle Translations</a> </li>
+    <li>Various crash fixes</li>
+</ul>
+<h4>2.0.0</h4>
+<h5>
+    Features:
+</h5>
 <ul>
     <li>Show changelog on launch</li>
-    <li>Updated translations</li>
-    <li>Fixed an issue where artist detail sort order wasn't selected/selectable</li>
-    <li>Fixed an issue where songs weren't sorted correctly if 'default' was selected</li>
-    <li>Fixed an issue where sort order wasn't preserved when playing songs</li>
-    <li>Fixed folder browser display issues when displayed in main tabs</li>
-    <li>Removed 'now playing' text from now playing screen</li>
-    <li>Added more playlist menu options to playlist detail screen</li>
-    <li>Fixed an issue where 'suggested' overflowed onto two lines for some languages</li>
+    <li>Dynamic themes!</li>
+    <li>Added album-shuffle (thanks Will Coughlin)</li>
+    <li>Added a display option to show remaining time (thanks lastbulletbender)</li>
+    <li>Added multi-select to artist/album/playlist/genre detail screens & search screen</li>
     <li>Added 'share' option to now playing screen menu items</li>
-    <li>Fixed a crash when sharing on Android N</li>
-    <li>Fixed issue where play count wasn't displayed in 'most played'</li>
-    <li>Fixed an issue where 'recently played albums' would change order whenever the screen was refreshed</li>
+    <li>Added 'go to genre' option to now playing screen</li>
+    <li>Added more playlist menu options to playlist detail screen</li>
+    <li>Shuffle now turns off when a new list of songs is added to the queue. This can be disabled in playback settings</li>
+    <li>Remember playlist sorting per-playlist</li>
 </ul>
-<h4>2.0.0-beta5</h4>
+
+<h5>
+    UI changes:
+</h5>
 <ul>
-    <li>Fixed an issue where drawer was locked if folders were shown in main tabs</li>
-    <li>Fixed issue where scroll position wasn't remembered</li>
-    <li>Fixed an issue where 'only on now playing' theme option didn't work</li>
-    <li>Reduce the number of SQL queries being performed, particularly during launch</li>
-    <li>Removed transparency/alpha slider from theme color picker</li>
-    <li>Use accent color for theme selector buttons</li>
-</ul>
-<h4>2.0.0-beta4</h4>
-<ul>
-    <li>Updated translations</li>
-    <li>Fixed an issue where files didn't load correctly from folder browser (thanks BezMan)</li>
-    <li>Fixed issue with launcher shortcuts</li>
-    <li>Ensure playback controls are shown in collapsed notification</li>
-    <li>Fixed issue where go-to-artist would only show one album</li>
-    <li>Fixed a crash when opening artwork settings</li>
-    <li>Fixed a crash when pressing folder/file overflow menu</li>
-    <li>Fixed a crash on some devices when attempting to start Equalizer</li>
-</ul>
-<h4>2.0.0-beta3</h4>
-<ul>
-    <li>Fixed issue where notifications didn't appear on Android O</li>
-    <li>Use the default system style for notifications</li>
-    <li>Removed option to invert notification icon colour - this shouldn't be necessary now that the default system style is used</li>
-</ul>
-<h4>2.0.0-beta2</h4>
-<ul>
-    <li>Fixed Equalizer crash</li>
-    <li>Fixed recently added albums display issue in 'Suggested'</li>
-</ul>
-<h4>2.0.0-beta1</h4>
-<h5>General changes</h5>
-<ul>
+    <li>Major theming overhaul. More stuff is themed correctly now</li>
     <li>App theme now matches the current artwork. This can be set to only occur on the 'now playing' screen, or turned off in settings</li>
-    <li>Sleep timer now displays time remaining in drawer when active.</li>
-    <li>Lyrics are now displayed in their own popup, instead of on top of the artwork</li>
-</ul>
-<h5>UI changes</h5>
-<ul>
+    <li>Redesigned artist/album/genre/playlist 'detail' screen.</li>
     <li>Toolbar now collapses when scrolling</li>
     <li>'Up Next' now slides up from now-playing</li>
     <li>Artwork is now full-bleed to the top of the screen</li>
-    <li>Major theming overhaul. More stuff is themed correctly now.</li>
-    <li>Landscape mode overhauled</li>
-    <li>More animations!</li>
-    <li>Minor redesign to artist/album/genre/playlist 'detail' screen.</li>
+    <li>Overhauled landscape mode</li>
     <li>Album count shown for artists</li>
     <li>Song count shown for albums</li>
     <li>Settings has had a facelift</li>
     <li>Moved Equaliser &amp; Sleep Timer to Navigation Drawer</li>
+    <li>Sleep timer now displays time remaining in drawer when active</li>
+    <li>Lyrics are now displayed in their own popup, instead of on top of the artwork</li>
+    <li>Close Voice Search screen if no results are found</li>
 </ul>
-<h5>Major behind-the-scenes changes</h5>
+
+<h5>
+    Code improvements:
+</h5>
 <ul>
+    <li>Major redesign of many aspects of the codebase</li>
     <li>Overhauled theming engine</li>
     <li>Migrated to RxJava 2</li>
-    <li>Removed Umano's SlidingUpPanel in favour of Google's BottomSheet (smoother and less buggy sliding)</li>
-    <li>Begin migrating to MVP architectural pattern (cleaner code, easier to maintain &amp; update)</li>
-    <li>Cleaned up and improved mountains of code</li>
     <li>Removed lots of old, unused resources - smaller app size, easier to maintain</li>
+    <li>Reduce the number of SQL queries being performed, particularly during launch</li>
 </ul>
-<h5>Todo</h5>
+
+<h5>
+    Bug fixes:
+</h5>
 <ul>
-    <li>Folder whitelisting is currently broken</li>
-    <li>Disable lockscreen artwork option has been temporarily removed</li>
-    <li>Fix crashes</li>
+    <li>Fixed an issue where 'play next' created a duplicate when used from now-playing queue</li>
+    <li>Fixed an issue where playback didn't stop when disconnecting from bluetooth</li>
+    <li>Fixed various tag editing issues</li>
+    <li>Work around a Last.FM issue to ensure artwork is high quality</li>
+    <li>Fixed crash when using gmail style placeholders</li>
+    <li>Fixed an issue where playing a song from a folder didn't enqueue the surrounding songs</li>
+    <li>Fixed some memory leaks (thanks Khang)</li>
+    <li>Lots and lots of other crash fixes</li>
 </ul>
+
 <h4>1.6.7</h4>
 <ul>
     <li>Fixed an issue where enqueued songs were lost when changing shuffle mode</li>

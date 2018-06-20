@@ -12,16 +12,20 @@ import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.LayoutRes;
 import android.widget.RemoteViews;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.simplecity.amp_library.R;
 import com.simplecity.amp_library.ShuttleApplication;
 import com.simplecity.amp_library.glide.utils.CustomAppWidgetTarget;
 import com.simplecity.amp_library.playback.MusicService;
+import com.simplecity.amp_library.playback.QueueManager;
+import com.simplecity.amp_library.playback.constants.InternalIntents;
+import com.simplecity.amp_library.playback.constants.MediaButtonCommand;
+import com.simplecity.amp_library.playback.constants.ServiceCommand;
 import com.simplecity.amp_library.rx.UnsafeAction;
 import com.simplecity.amp_library.ui.activities.MainActivity;
 import com.simplecity.amp_library.utils.DrawableUtils;
+import com.simplecity.amp_library.utils.ShuttleUtils;
 
 public abstract class BaseWidgetProvider extends AppWidgetProvider {
 
@@ -61,8 +65,8 @@ public abstract class BaseWidgetProvider extends AppWidgetProvider {
         }
 
         // Send broadcast intent to any running MusicService so it can wrap around with an immediate update.
-        Intent updateIntent = new Intent(MusicService.ServiceCommand.SERVICE_COMMAND);
-        updateIntent.putExtra(MusicService.MediaButtonCommand.CMD_NAME, getUpdateCommandString());
+        Intent updateIntent = new Intent(ServiceCommand.SERVICE_COMMAND);
+        updateIntent.putExtra(MediaButtonCommand.CMD_NAME, getUpdateCommandString());
         updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
         updateIntent.addFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
         context.sendBroadcast(updateIntent);
@@ -86,50 +90,43 @@ public abstract class BaseWidgetProvider extends AppWidgetProvider {
 
     public void notifyChange(MusicService service, String what) {
         if (getInstances(service) != null) {
-            if (MusicService.InternalIntents.META_CHANGED.equals(what)
-                    || MusicService.InternalIntents.PLAY_STATE_CHANGED.equals(what)
-                    || MusicService.InternalIntents.SHUFFLE_CHANGED.equals(what)
-                    || MusicService.InternalIntents.REPEAT_CHANGED.equals(what)) {
-                update(service, getInstances(service), MusicService.InternalIntents.META_CHANGED.equals(what));
+            if (InternalIntents.META_CHANGED.equals(what)
+                    || InternalIntents.PLAY_STATE_CHANGED.equals(what)
+                    || InternalIntents.SHUFFLE_CHANGED.equals(what)
+                    || InternalIntents.REPEAT_CHANGED.equals(what)) {
+                update(service, getInstances(service), InternalIntents.META_CHANGED.equals(what));
             }
         }
     }
 
     public static void setupButtons(Context context, RemoteViews views, int appWidgetId, int rootViewId) {
 
-        Intent intent;
-        PendingIntent pendingIntent;
-
-        final ComponentName serviceName = new ComponentName(context, MusicService.class);
-
-        intent = new Intent(context, MainActivity.class);
-        pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0);
         views.setOnClickPendingIntent(rootViewId, pendingIntent);
 
-        intent = new Intent(MusicService.ServiceCommand.TOGGLE_PAUSE_ACTION);
-        intent.setComponent(serviceName);
-        pendingIntent = PendingIntent.getService(context, appWidgetId, intent, 0);
+        pendingIntent = getPendingIntent(context, appWidgetId, new Intent(ServiceCommand.TOGGLE_PAUSE_ACTION));
         views.setOnClickPendingIntent(R.id.play_button, pendingIntent);
 
-        intent = new Intent(MusicService.ServiceCommand.NEXT_ACTION);
-        intent.setComponent(serviceName);
-        pendingIntent = PendingIntent.getService(context, appWidgetId, intent, 0);
+        pendingIntent = getPendingIntent(context, appWidgetId, new Intent(ServiceCommand.NEXT_ACTION));
         views.setOnClickPendingIntent(R.id.next_button, pendingIntent);
 
-        intent = new Intent(MusicService.ServiceCommand.PREV_ACTION);
-        intent.setComponent(serviceName);
-        pendingIntent = PendingIntent.getService(context, appWidgetId, intent, 0);
+        pendingIntent = getPendingIntent(context, appWidgetId, new Intent(ServiceCommand.PREV_ACTION));
         views.setOnClickPendingIntent(R.id.prev_button, pendingIntent);
 
-        intent = new Intent(MusicService.ServiceCommand.SHUFFLE_ACTION);
-        intent.setComponent(serviceName);
-        pendingIntent = PendingIntent.getService(context, appWidgetId, intent, 0);
+        pendingIntent = getPendingIntent(context, appWidgetId, new Intent(ServiceCommand.SHUFFLE_ACTION));
         views.setOnClickPendingIntent(R.id.shuffle_button, pendingIntent);
 
-        intent = new Intent(MusicService.ServiceCommand.REPEAT_ACTION);
-        intent.setComponent(serviceName);
-        pendingIntent = PendingIntent.getService(context, appWidgetId, intent, 0);
+        pendingIntent = getPendingIntent(context, appWidgetId, new Intent(ServiceCommand.REPEAT_ACTION));
         views.setOnClickPendingIntent(R.id.repeat_button, pendingIntent);
+    }
+
+    private static PendingIntent getPendingIntent(Context context, int appWidgetId, Intent intent) {
+        intent.setComponent(new ComponentName(context, MusicService.class));
+        if (ShuttleUtils.hasOreo()) {
+            return PendingIntent.getForegroundService(context, appWidgetId, intent, 0);
+        } else {
+            return PendingIntent.getService(context, appWidgetId, intent, 0);
+        }
     }
 
     void loadArtwork(MusicService service, int[] appWidgetIds, RemoteViews views, int bitmapSize) {
@@ -152,11 +149,11 @@ public abstract class BaseWidgetProvider extends AppWidgetProvider {
 
     void setupRepeatView(MusicService service, RemoteViews views, boolean invertIcons) {
         switch (service.getRepeatMode()) {
-            case MusicService.RepeatMode.ALL:
+            case QueueManager.RepeatMode.ALL:
                 views.setImageViewBitmap(R.id.repeat_button, DrawableUtils.getColoredBitmap(service, R.drawable.ic_repeat_24dp_scaled));
                 views.setContentDescription(R.id.shuffle_button, service.getString(R.string.btn_repeat_current));
                 break;
-            case MusicService.RepeatMode.ONE:
+            case QueueManager.RepeatMode.ONE:
                 views.setImageViewBitmap(R.id.repeat_button, DrawableUtils.getColoredBitmap(service, R.drawable.ic_repeat_one_24dp_scaled));
                 views.setContentDescription(R.id.shuffle_button, service.getString(R.string.btn_repeat_off));
                 break;
@@ -173,7 +170,7 @@ public abstract class BaseWidgetProvider extends AppWidgetProvider {
 
     void setupShuffleView(MusicService service, RemoteViews views, boolean invertIcons) {
         switch (service.getShuffleMode()) {
-            case MusicService.ShuffleMode.OFF:
+            case QueueManager.ShuffleMode.OFF:
                 if (invertIcons) {
                     views.setImageViewBitmap(R.id.shuffle_button, DrawableUtils.getBlackBitmap(service, R.drawable.ic_shuffle_24dp_scaled));
                 } else {

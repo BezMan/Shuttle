@@ -1,30 +1,32 @@
 package com.simplecity.amp_library.ui.presenters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.support.annotation.NonNull;
-
 import com.cantrowitz.rxbroadcast.RxBroadcast;
 import com.simplecity.amp_library.ShuttleApplication;
 import com.simplecity.amp_library.lyrics.LyricsDialog;
 import com.simplecity.amp_library.model.Song;
-import com.simplecity.amp_library.playback.MusicService;
+import com.simplecity.amp_library.playback.MediaManager;
 import com.simplecity.amp_library.playback.PlaybackMonitor;
+import com.simplecity.amp_library.playback.constants.InternalIntents;
 import com.simplecity.amp_library.tagger.TaggerDialog;
 import com.simplecity.amp_library.ui.dialog.BiographyDialog;
+import com.simplecity.amp_library.ui.dialog.ShareDialog;
+import com.simplecity.amp_library.ui.dialog.UpgradeDialog;
 import com.simplecity.amp_library.ui.views.PlayerView;
 import com.simplecity.amp_library.utils.LogUtils;
-import com.simplecity.amp_library.utils.MusicUtils;
 import com.simplecity.amp_library.utils.PlaylistUtils;
-
-import java.util.concurrent.TimeUnit;
-
-import javax.inject.Inject;
-
+import com.simplecity.amp_library.utils.SettingsManager;
+import com.simplecity.amp_library.utils.ShuttleUtils;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import java.util.concurrent.TimeUnit;
+import javax.inject.Inject;
 
 public class PlayerPresenter extends Presenter<PlayerView> {
 
@@ -36,8 +38,14 @@ public class PlayerPresenter extends Presenter<PlayerView> {
     private long currentPlaybackTime;
     private boolean currentPlaybackTimeVisible;
 
+    private Disposable isFavoriteDisposable;
+    private MediaManager mediaManager;
+    private final PlaybackMonitor playbackMonitor;
+
     @Inject
-    public PlayerPresenter() {
+    public PlayerPresenter(MediaManager mediaManager) {
+        this.mediaManager = mediaManager;
+        this.playbackMonitor = new PlaybackMonitor(mediaManager);
     }
 
     @Override
@@ -48,38 +56,36 @@ public class PlayerPresenter extends Presenter<PlayerView> {
     @Override
     public void bindView(@NonNull PlayerView view) {
         super.bindView(view);
-
         updateTrackInfo();
         updateShuffleMode();
         updatePlaystate();
         updateRepeatMode();
 
-        addDisposable(PlaybackMonitor.getInstance().getProgressObservable()
+        addDisposable(playbackMonitor.getProgressObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(progress -> view.setSeekProgress((int) (progress * 1000)),
                         error -> LogUtils.logException(TAG, "PlayerPresenter: Error updating seek progress", error)));
 
-        addDisposable(PlaybackMonitor.getInstance().getCurrentTimeObservable()
+        addDisposable(playbackMonitor.getCurrentTimeObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(pos -> refreshCurrentTimeText(pos / 1000),
+                .subscribe(pos -> refreshTimeText(pos / 1000),
                         error -> LogUtils.logException(TAG, "PlayerPresenter: Error refreshing time text", error)));
 
         addDisposable(Flowable.interval(500, TimeUnit.MILLISECONDS)
                 .onBackpressureDrop()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(aLong -> setCurrentTimeVisibility(MusicUtils.isPlaying() || !currentPlaybackTimeVisible),
+                .subscribe(aLong -> setCurrentTimeVisibility(mediaManager.isPlaying() || !currentPlaybackTimeVisible),
                         error -> LogUtils.logException(TAG, "PlayerPresenter: Error emitting current time", error)));
 
         final IntentFilter filter = new IntentFilter();
-        filter.addAction(MusicService.InternalIntents.META_CHANGED);
-        filter.addAction(MusicService.InternalIntents.QUEUE_CHANGED);
-        filter.addAction(MusicService.InternalIntents.PLAY_STATE_CHANGED);
-        filter.addAction(MusicService.InternalIntents.SHUFFLE_CHANGED);
-        filter.addAction(MusicService.InternalIntents.REPEAT_CHANGED);
-        filter.addAction(MusicService.InternalIntents.SERVICE_CONNECTED);
-        filter.addAction(MusicService.InternalIntents.FAVORITE_CHANGED);
+        filter.addAction(InternalIntents.META_CHANGED);
+        filter.addAction(InternalIntents.QUEUE_CHANGED);
+        filter.addAction(InternalIntents.PLAY_STATE_CHANGED);
+        filter.addAction(InternalIntents.SHUFFLE_CHANGED);
+        filter.addAction(InternalIntents.REPEAT_CHANGED);
+        filter.addAction(InternalIntents.SERVICE_CONNECTED);
 
         addDisposable(RxBroadcast.fromBroadcast(ShuttleApplication.getInstance(), filter)
                 .toFlowable(BackpressureStrategy.LATEST)
@@ -88,46 +94,42 @@ public class PlayerPresenter extends Presenter<PlayerView> {
                     final String action = intent.getAction();
                     if (action != null) {
                         switch (action) {
-                            case MusicService.InternalIntents.META_CHANGED:
+                            case InternalIntents.META_CHANGED:
                                 updateTrackInfo();
                                 break;
-                            case MusicService.InternalIntents.QUEUE_CHANGED:
+                            case InternalIntents.QUEUE_CHANGED:
                                 updateTrackInfo();
                                 break;
-                            case MusicService.InternalIntents.PLAY_STATE_CHANGED:
+                            case InternalIntents.PLAY_STATE_CHANGED:
                                 updateTrackInfo();
                                 updatePlaystate();
                                 break;
-                            case MusicService.InternalIntents.SHUFFLE_CHANGED:
+                            case InternalIntents.SHUFFLE_CHANGED:
                                 updateTrackInfo();
                                 updateShuffleMode();
                                 break;
-                            case MusicService.InternalIntents.REPEAT_CHANGED:
+                            case InternalIntents.REPEAT_CHANGED:
                                 updateRepeatMode();
                                 break;
-                            case MusicService.InternalIntents.SERVICE_CONNECTED:
+                            case InternalIntents.SERVICE_CONNECTED:
                                 updateTrackInfo();
                                 updatePlaystate();
                                 updateShuffleMode();
                                 updateRepeatMode();
-                                break;
-                            case MusicService.InternalIntents.FAVORITE_CHANGED:
-                                PlaylistUtils.isFavorite(MusicUtils.getSong())
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(this::updateFavorite);
                                 break;
                         }
                     }
                 }, error -> LogUtils.logException(TAG, "PlayerPresenter: Error sending broadcast", error)));
     }
 
-
-    private void refreshCurrentTimeText(long playbackTime) {
+    private void refreshTimeText(long playbackTime) {
         if (playbackTime != currentPlaybackTime) {
             PlayerView view = getView();
             if (view != null) {
                 view.currentTimeChanged(playbackTime);
+                if (SettingsManager.getInstance().displayRemainingTime()) {
+                    view.totalTimeChanged(-(mediaManager.getDuration() / 1000 - playbackTime));
+                }
             }
         }
         currentPlaybackTime = playbackTime;
@@ -153,73 +155,79 @@ public class PlayerPresenter extends Presenter<PlayerView> {
     public void updateTrackInfo() {
         PlayerView view = getView();
         if (view != null) {
-            view.trackInfoChanged(MusicUtils.getSong());
-            view.currentTimeChanged(MusicUtils.getPosition() / 1000);
-            view.queueChanged(MusicUtils.getQueuePosition() + 1, MusicUtils.getQueue().size());
+            view.trackInfoChanged(mediaManager.getSong());
+            view.queueChanged(mediaManager.getQueuePosition() + 1, mediaManager.getQueue().size());
+            view.currentTimeChanged(mediaManager.getPosition() / 1000);
+            updateRemainingTime();
 
-            addDisposable(PlaylistUtils.isFavorite(MusicUtils.getSong())
+            if (isFavoriteDisposable != null) {
+                isFavoriteDisposable.dispose();
+            }
+            isFavoriteDisposable = PlaylistUtils.isFavorite(mediaManager.getSong())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(isFavorite -> updateFavorite((isFavorite))));
+                    .subscribe(isFavorite -> updateFavorite((isFavorite)));
+
+            addDisposable(isFavoriteDisposable);
         }
     }
 
     private void updatePlaystate() {
         PlayerView view = getView();
         if (view != null) {
-            view.playbackChanged(MusicUtils.isPlaying());
+            view.playbackChanged(mediaManager.isPlaying());
         }
     }
 
     private void updateShuffleMode() {
         PlayerView view = getView();
         if (view != null) {
-            view.repeatChanged(MusicUtils.getRepeatMode());
-            view.shuffleChanged(MusicUtils.getShuffleMode());
+            view.repeatChanged(mediaManager.getRepeatMode());
+            view.shuffleChanged(mediaManager.getShuffleMode());
         }
     }
 
     private void updateRepeatMode() {
         PlayerView view = getView();
         if (view != null) {
-            view.repeatChanged(MusicUtils.getRepeatMode());
+            view.repeatChanged(mediaManager.getRepeatMode());
         }
     }
 
     public void togglePlayback() {
-        MusicUtils.playOrPause();
+        mediaManager.playOrPause();
         updatePlaystate();
     }
 
     public void toggleFavorite() {
-        MusicUtils.toggleFavorite();
+        mediaManager.toggleFavorite();
     }
 
     public void skip() {
-        MusicUtils.next();
+        mediaManager.next();
     }
 
     public void prev(boolean allowTrackRestart) {
-        MusicUtils.previous(allowTrackRestart);
+        mediaManager.previous(allowTrackRestart);
     }
 
     public void toggleShuffle() {
-        MusicUtils.toggleShuffleMode();
+        mediaManager.toggleShuffleMode();
         updateShuffleMode();
     }
 
     public void toggleRepeat() {
-        MusicUtils.cycleRepeat();
+        mediaManager.cycleRepeat();
         updateRepeatMode();
     }
 
     public void seekTo(int progress) {
-        MusicUtils.seekTo(MusicUtils.getDuration() * progress / 1000);
+        mediaManager.seekTo(mediaManager.getDuration() * progress / 1000);
     }
 
     public void scanForward(final int repeatCount, long delta) {
         if (repeatCount == 0) {
-            startSeekPos = MusicUtils.getPosition();
+            startSeekPos = mediaManager.getPosition();
             lastSeekEventTime = 0;
         } else {
             if (delta < 5000) {
@@ -230,15 +238,15 @@ public class PlayerPresenter extends Presenter<PlayerView> {
                 delta = 50000 + (delta - 5000) * 40;
             }
             long newpos = startSeekPos + delta;
-            final long duration = MusicUtils.getDuration();
+            final long duration = mediaManager.getDuration();
             if (newpos >= duration) {
                 // move to next track
-                MusicUtils.next();
+                mediaManager.next();
                 startSeekPos -= duration; // is OK to go negative
                 newpos -= duration;
             }
             if (delta - lastSeekEventTime > 250 || repeatCount < 0) {
-                MusicUtils.seekTo(newpos);
+                mediaManager.seekTo(newpos);
                 lastSeekEventTime = delta;
             }
         }
@@ -246,7 +254,7 @@ public class PlayerPresenter extends Presenter<PlayerView> {
 
     public void scanBackward(final int repeatCount, long delta) {
         if (repeatCount == 0) {
-            startSeekPos = MusicUtils.getPosition();
+            startSeekPos = mediaManager.getPosition();
             lastSeekEventTime = 0;
         } else {
             if (delta < 5000) {
@@ -259,13 +267,13 @@ public class PlayerPresenter extends Presenter<PlayerView> {
             long newpos = startSeekPos - delta;
             if (newpos < 0) {
                 // move to previous track
-                MusicUtils.previous(true);
-                final long duration = MusicUtils.getDuration();
+                mediaManager.previous(true);
+                final long duration = mediaManager.getDuration();
                 startSeekPos += duration;
                 newpos += duration;
             }
             if (delta - lastSeekEventTime > 250 || repeatCount < 0) {
-                MusicUtils.seekTo(newpos);
+                mediaManager.seekTo(newpos);
                 lastSeekEventTime = delta;
             }
         }
@@ -274,23 +282,38 @@ public class PlayerPresenter extends Presenter<PlayerView> {
     public void showLyrics(Context context) {
         PlayerView playerView = getView();
         if (playerView != null) {
-            playerView.showLyricsDialog(new LyricsDialog().getDialog(context));
+            playerView.showLyricsDialog(new LyricsDialog(mediaManager).getDialog(context));
         }
     }
 
-    public void editTagsClicked() {
+    public void editTagsClicked(Activity activity) {
         PlayerView playerView = getView();
         if (playerView != null) {
-            playerView.showTaggerDialog(TaggerDialog.newInstance(MusicUtils.getSong()));
+            if (!ShuttleUtils.isUpgraded()) {
+                playerView.showUpgradeDialog(UpgradeDialog.getUpgradeDialog(activity));
+            } else {
+                playerView.showTaggerDialog(TaggerDialog.newInstance(mediaManager.getSong()));
+            }
         }
     }
 
     public void songInfoClicked(Context context) {
         PlayerView playerView = getView();
         if (playerView != null) {
-            Song song = MusicUtils.getSong();
+            Song song = mediaManager.getSong();
             if (song != null) {
                 playerView.showSongInfoDialog(BiographyDialog.getSongInfoDialog(context, song));
+            }
+        }
+    }
+
+    public void updateRemainingTime() {
+        PlayerView playerView = getView();
+        if (playerView != null) {
+            if (SettingsManager.getInstance().displayRemainingTime()) {
+                playerView.totalTimeChanged(-((mediaManager.getDuration() - mediaManager.getPosition()) / 1000));
+            } else {
+                playerView.totalTimeChanged(mediaManager.getDuration() / 1000);
             }
         }
     }
@@ -298,9 +321,9 @@ public class PlayerPresenter extends Presenter<PlayerView> {
     public void shareClicked(Context context) {
         PlayerView playerView = getView();
         if (playerView != null) {
-            Song song = MusicUtils.getSong();
+            Song song = mediaManager.getSong();
             if (song != null) {
-                song.share(context);
+                ShareDialog.getDialog(context, song).show();
             }
         }
     }

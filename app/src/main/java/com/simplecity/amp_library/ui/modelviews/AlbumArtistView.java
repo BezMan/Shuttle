@@ -5,7 +5,6 @@ import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.florent37.glidepalette.BitmapPalette;
@@ -15,9 +14,8 @@ import com.simplecity.amp_library.format.PrefixHighlighter;
 import com.simplecity.amp_library.model.AlbumArtist;
 import com.simplecity.amp_library.ui.adapters.ViewType;
 import com.simplecity.amp_library.utils.PlaceholderProvider;
-import com.simplecity.amp_library.utils.SortManager;
+import com.simplecity.amp_library.utils.sorting.SortManager;
 import com.simplecity.amp_library.utils.StringUtils;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,19 +61,19 @@ public class AlbumArtistView extends MultiItemView<AlbumArtistView.ViewHolder, A
         this.prefix = prefix;
     }
 
-    private void onItemClick(int position, ViewHolder holder) {
+    void onItemClick(int position, ViewHolder holder) {
         if (listener != null) {
             listener.onAlbumArtistClick(position, this, holder);
         }
     }
 
-    private void onOverflowClick(View v) {
+    void onOverflowClick(View v) {
         if (listener != null) {
             listener.onAlbumArtistOverflowClicked(v, albumArtist);
         }
     }
 
-    private boolean onItemLongClick(int positon) {
+    boolean onItemLongClick(int positon) {
         if (listener != null) {
             return listener.onAlbumArtistLongClick(positon, this);
         }
@@ -134,11 +132,6 @@ public class AlbumArtistView extends MultiItemView<AlbumArtistView.ViewHolder, A
     }
 
     @Override
-    public AlbumArtist getItem() {
-        return albumArtist;
-    }
-
-    @Override
     public void bindView(ViewHolder holder, int position, List payloads) {
         super.bindView(holder, position, payloads);
         //A partial bind. Due to the areContentsEqual implementation, the only reason this is called
@@ -151,6 +144,11 @@ public class AlbumArtistView extends MultiItemView<AlbumArtistView.ViewHolder, A
     @Override
     public ViewHolder createViewHolder(ViewGroup parent) {
         return new ViewHolder(createView(parent));
+    }
+
+    @Override
+    public int getSpanSize(int spanCount) {
+        return 1;
     }
 
     @Override

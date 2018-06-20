@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.simplecity.amp_library.R;
 import com.simplecity.amp_library.ShuttleApplication;
@@ -49,29 +48,6 @@ public class DialogUtils {
         }
     }
 
-    /**
-     * Displayed when the user chooses to upgrade
-     */
-    public static MaterialDialog getUpgradeDialog(final Context context, MaterialDialog.SingleButtonCallback listener) {
-        return getBuilder(context)
-                .title(context.getResources().getString(R.string.get_pro_title))
-                .content(context.getResources().getString(R.string.upgrade_dialog_message))
-                .positiveText(R.string.btn_upgrade)
-                .onPositive(listener)
-                .negativeText(R.string.get_pro_button_no)
-                .build();
-    }
-
-    public static void showDownloadWarningDialog(Context context, MaterialDialog.SingleButtonCallback listener) {
-        getBuilder(context)
-                .title(R.string.pref_title_download_artwork)
-                .content(R.string.pref_warning_download_artwork)
-                .positiveText(R.string.download)
-                .onPositive(listener)
-                .negativeText(R.string.cancel)
-                .show();
-    }
-
     public static void showWeekSelectorDialog(final Context context) {
 
         @SuppressLint("InflateParams")
@@ -81,7 +57,7 @@ public class DialogUtils {
         numberPicker = view.findViewById(R.id.weeks);
         numberPicker.setMaxValue(12);
         numberPicker.setMinValue(1);
-        numberPicker.setValue(MusicUtils.getIntPref(context, "numweeks", 2));
+        numberPicker.setValue(SettingsManager.getInstance().getNumWeeks());
 
         getBuilder(context)
                 .title(R.string.week_selector)
@@ -91,7 +67,7 @@ public class DialogUtils {
                 .onPositive((materialDialog, dialogAction) -> {
                     int numweeks;
                     numweeks = numberPicker.getValue();
-                    MusicUtils.setIntPref(context, "numweeks", numweeks);
+                    SettingsManager.getInstance().setNumWeeks(numweeks);
                 })
                 .show();
     }
@@ -101,9 +77,13 @@ public class DialogUtils {
         if (!SettingsManager.getInstance().getHasRated() && !SettingsManager.getInstance().hasSeenRateSnackbar) {
             //If this is the tenth launch, or a multiple of 50
             if (SettingsManager.getInstance().getLaunchCount() == 10 || (SettingsManager.getInstance().getLaunchCount() != 0 && SettingsManager.getInstance().getLaunchCount() % 50 == 0)) {
+
                 Snackbar snackbar = Snackbar.make(view, R.string.snackbar_rate_text, Snackbar.LENGTH_INDEFINITE)
                         .setDuration(15000)
-                        .setAction(R.string.snackbar_rate_action, v -> ShuttleUtils.openShuttleLink(activity, ShuttleApplication.getInstance().getPackageName(), activity.getPackageManager()))
+                        .setAction(R.string.snackbar_rate_action, v -> {
+                            ShuttleUtils.openShuttleLink(activity, ShuttleApplication.getInstance().getPackageName(), activity.getPackageManager());
+                            AnalyticsManager.logRateClicked();
+                        })
                         .addCallback(new Snackbar.Callback() {
                             @Override
                             public void onDismissed(Snackbar transientBottomBar, int event) {
@@ -122,6 +102,8 @@ public class DialogUtils {
                 if (snackbarText != null) {
                     snackbarText.setTextColor(Color.WHITE);
                 }
+
+                AnalyticsManager.logRateShown();
             }
 
             SettingsManager.getInstance().hasSeenRateSnackbar = true;

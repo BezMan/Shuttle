@@ -5,14 +5,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.util.AttributeSet;
-
 import com.simplecity.amp_library.ShuttleApplication;
 import com.simplecity.amp_library.ui.drawer.DrawerLockManager;
+import com.simplecity.amp_library.ui.views.multisheet.MultiSheetSlideEventRelay.SlideEvent;
 import com.simplecity.multisheetview.ui.view.MultiSheetView;
+import io.reactivex.disposables.CompositeDisposable;
 
 import javax.inject.Inject;
-
-import io.reactivex.disposables.CompositeDisposable;
 
 /**
  * A custom MultiSheetView with an RXRelay for responding to expand/collapse events.
@@ -21,13 +20,15 @@ public class CustomMultiSheetView extends MultiSheetView {
 
     private static final String TAG = "CustomMultiSheetView";
 
-    @Inject MultiSheetEventRelay multiSheetEventRelay;
-    @Inject MultiSheetSlideEventRelay multiSheetSlideEventRelay;
+    @Inject
+    MultiSheetEventRelay multiSheetEventRelay;
+    @Inject
+    MultiSheetSlideEventRelay multiSheetSlideEventRelay;
 
     private CompositeDisposable disposables;
 
-    private DrawerLockManager.DrawerLock sheet1Lock = () -> "Sheet 1";
-    private DrawerLockManager.DrawerLock sheet2Lock = () -> "Sheet 2";
+    DrawerLockManager.DrawerLock sheet1Lock = () -> "Sheet 1";
+    DrawerLockManager.DrawerLock sheet2Lock = () -> "Sheet 2";
 
     public CustomMultiSheetView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -56,11 +57,12 @@ public class CustomMultiSheetView extends MultiSheetView {
                             break;
                     }
                 }
+                multiSheetSlideEventRelay.sendEvent(new SlideEvent(sheet, state));
             }
 
             @Override
             public void onSlide(int sheet, float slideOffset) {
-                multiSheetSlideEventRelay.sendEvent(new MultiSheetSlideEventRelay.SlideEvent(sheet, slideOffset));
+                multiSheetSlideEventRelay.sendEvent(new SlideEvent(sheet, slideOffset));
             }
         });
     }

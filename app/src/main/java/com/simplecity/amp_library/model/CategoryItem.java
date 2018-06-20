@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
-
 import com.simplecity.amp_library.R;
 import com.simplecity.amp_library.ui.fragments.AlbumArtistFragment;
 import com.simplecity.amp_library.ui.fragments.AlbumFragment;
@@ -14,7 +13,6 @@ import com.simplecity.amp_library.ui.fragments.PlaylistFragment;
 import com.simplecity.amp_library.ui.fragments.SongFragment;
 import com.simplecity.amp_library.ui.fragments.SuggestedFragment;
 import com.simplecity.amp_library.utils.ComparisonUtils;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,15 +29,16 @@ public class CategoryItem {
         int FOLDERS = 6;
     }
 
-    @Type public int type;
+    @Type
+    public int type;
 
     public int sortOrder;
 
-    public boolean isEnabled;
+    public boolean isChecked;
 
     private CategoryItem(@Type int type, SharedPreferences sharedPreferences) {
         this.type = type;
-        isEnabled = sharedPreferences.getBoolean(getEnabledKey(), isEnabledByDefault());
+        isChecked = sharedPreferences.getBoolean(getEnabledKey(), isEnabledByDefault());
         sortOrder = sharedPreferences.getInt(getSortKey(), 0);
     }
 
@@ -57,7 +56,7 @@ public class CategoryItem {
     }
 
     public void savePrefs(SharedPreferences.Editor editor) {
-        editor.putBoolean(getEnabledKey(), isEnabled);
+        editor.putBoolean(getEnabledKey(), isChecked);
         editor.putInt(getSortKey(), sortOrder);
         editor.apply();
     }

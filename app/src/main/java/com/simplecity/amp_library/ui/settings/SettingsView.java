@@ -2,23 +2,15 @@ package com.simplecity.amp_library.ui.settings;
 
 import android.content.Intent;
 import android.support.annotation.StringRes;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
+import com.simplecity.amp_library.ui.views.PurchaseView;
 
-public interface SettingsView {
+public interface SettingsView extends PurchaseView {
 
     // Support
 
     void showChangelog(MaterialDialog dialog);
-
-    void openStoreLink(Intent intent);
-
-    void showUpgradeDialog(MaterialDialog dialog);
-
-    void showUpgradeSuccessDialog(MaterialDialog dialog);
-
-    void showUpgradeFailedToast(@StringRes int messageResId);
 
     void showRestorePurchasesMessage(@StringRes int messageResId);
 

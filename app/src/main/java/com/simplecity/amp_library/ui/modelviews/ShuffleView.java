@@ -1,9 +1,12 @@
 package com.simplecity.amp_library.ui.modelviews;
 
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.TextView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.simplecity.amp_library.R;
 import com.simplecity.amp_library.ui.adapters.ViewType;
 import com.simplecityapps.recycler_adapter.model.BaseViewModel;
@@ -13,6 +16,13 @@ public class ShuffleView extends BaseViewModel<ShuffleView.ViewHolder> {
 
     public interface ShuffleClickListener {
         void onShuffleItemClick();
+    }
+
+    @StringRes
+    private int titleResId = R.string.shuffle_all;
+
+    public void setTitleResId(int titleResId) {
+        this.titleResId = titleResId;
     }
 
     @Nullable
@@ -41,10 +51,10 @@ public class ShuffleView extends BaseViewModel<ShuffleView.ViewHolder> {
     public void bindView(ViewHolder holder) {
         super.bindView(holder);
 
-        holder.bind(this);
+        holder.title.setText(titleResId);
     }
 
-    private void onItemClick() {
+    void onItemClick() {
         if (listener != null) {
             listener.onShuffleItemClick();
         }
@@ -52,8 +62,13 @@ public class ShuffleView extends BaseViewModel<ShuffleView.ViewHolder> {
 
     public static class ViewHolder extends BaseViewHolder<ShuffleView> {
 
+        @BindView(R.id.title)
+        TextView title;
+
         public ViewHolder(View itemView) {
             super(itemView);
+
+            ButterKnife.bind(this, itemView);
 
             itemView.setOnClickListener(v -> viewModel.onItemClick());
         }

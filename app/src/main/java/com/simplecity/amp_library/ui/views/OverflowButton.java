@@ -7,11 +7,9 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.AttributeSet;
-
 import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.LightDarkColorState;
 import com.simplecity.amp_library.R;
-
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 
@@ -19,7 +17,7 @@ public class OverflowButton extends NonScrollImageButton {
 
     private Disposable aestheticDisposable;
 
-    private final Drawable drawable;
+    public Drawable drawable;
 
     private boolean dark = false;
 

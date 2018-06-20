@@ -1,20 +1,25 @@
 package com.simplecity.amp_library.utils;
 
-import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.simplecity.amp_library.BuildConfig;
 import com.simplecity.amp_library.R;
-import com.simplecity.amp_library.ShuttleApplication;
 import com.simplecity.amp_library.model.CategoryItem;
 import com.simplecity.amp_library.ui.adapters.ViewType;
+import com.simplecity.amp_library.utils.sorting.SortManager;
 
-public class SettingsManager {
+public class SettingsManager extends BaseSettingsManager {
 
     private static final String TAG = "SettingsManager";
+
+    private static SettingsManager instance;
+
+    public static SettingsManager getInstance() {
+        if (instance == null) {
+            instance = new SettingsManager();
+        }
+        return instance;
+    }
 
     // Support
     public static String KEY_PREF_CHANGELOG = "pref_changelog";
@@ -26,6 +31,7 @@ public class SettingsManager {
     // Display
     public static String KEY_PREF_TAB_CHOOSER = "pref_tab_chooser";
     public static String KEY_PREF_DEFAULT_PAGE = "pref_default_page";
+    public static String KEY_DISPLAY_REMAINING_TIME = "pref_display_remaining_time";
 
     // Themes
     public static String KEY_PREF_THEME_BASE = "pref_theme_base";
@@ -46,69 +52,36 @@ public class SettingsManager {
     public static String KEY_PREF_BLACKLIST = "pref_blacklist_view";
     public static String KEY_PREF_WHITELIST = "pref_whitelist_view";
 
+    // Playback
+    public static String KEY_PREF_REMEMBER_SHUFFLE = "pref_remember_shuffle";
+
     // Upgrade
     public static String KEY_PREF_UPGRADE = "pref_upgrade";
 
-    private static SettingsManager sInstance;
-
-    public static SettingsManager getInstance() {
-        if (sInstance == null) {
-            sInstance = new SettingsManager();
-        }
-        return sInstance;
-    }
-
     // Whether the 'rate' snackbar has been seen during this session
     public boolean hasSeenRateSnackbar = false;
+
+    // Whether to display artwork in the songs list
+    //public static String KEY_SHOW_
 
     private SettingsManager() {
 
     }
 
-    private SharedPreferences getSharedPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(ShuttleApplication.getInstance());
-    }
+    public static final String KEY_SHOW_LOCKSCREEN_ARTWORK = "pref_show_lockscreen_artwork";
 
-    @Nullable
-    private String getString(@NonNull String key) {
-        return getSharedPreferences().getString(key, null);
-    }
-
-    @NonNull
-    private String getString(@NonNull String key, @NonNull String defaultValue) {
-        return getSharedPreferences().getString(key, defaultValue);
-    }
-
-    private void setString(@NonNull String key, @Nullable String value) {
-        final SharedPreferences.Editor editor = getSharedPreferences().edit();
-        editor.putString(key, value);
-        editor.apply();
-    }
-
-    private boolean getBool(@NonNull String key, boolean defaultValue) {
-        return getSharedPreferences().getBoolean(key, defaultValue);
-    }
-
-    private void setBool(@NonNull String key, boolean value) {
-        final SharedPreferences.Editor editor = getSharedPreferences().edit();
-        editor.putBoolean(key, value);
-        editor.apply();
-    }
-
-    private int getInt(@NonNull String key, int defaultValue) {
-        return getSharedPreferences().getInt(key, defaultValue);
-    }
-
-    private void setInt(@NonNull String key, int value) {
-        final SharedPreferences.Editor editor = getSharedPreferences().edit();
-        editor.putInt(key, value);
-        editor.apply();
+    public boolean showLockscreenArtwork() {
+        return getBool(KEY_SHOW_LOCKSCREEN_ARTWORK, true);
     }
 
     private static final String KEY_KEEP_SCREEN_ON = "pref_screen_on";
 
     public boolean keepScreenOn() {
         return getBool(KEY_KEEP_SCREEN_ON, false);
+    }
+
+    public boolean displayRemainingTime() {
+        return getBool(KEY_DISPLAY_REMAINING_TIME, true);
     }
 
     private static final String KEY_ALBUM_DISPLAY_TYPE = "album_display_type_new";
@@ -119,7 +92,7 @@ public class SettingsManager {
 
     @ViewType
     public int getAlbumDisplayType() {
-        return getInt(KEY_ALBUM_DISPLAY_TYPE, ViewType.ALBUM_LIST);
+        return getInt(KEY_ALBUM_DISPLAY_TYPE, ShuttleUtils.isTablet() ? ViewType.ALBUM_PALETTE : ViewType.ALBUM_LIST);
     }
 
     private static final String KEY_ARTIST_DISPLAY_TYPE = "artist_display_type_new";
@@ -203,6 +176,7 @@ public class SettingsManager {
         setString(DOCUMENT_TREE_URI, documentTreeUri);
     }
 
+    @Nullable
     public String getDocumentTreeUri() {
         return getString(DOCUMENT_TREE_URI);
     }
@@ -214,7 +188,7 @@ public class SettingsManager {
     }
 
     public String getFolderBrowserInitialDir() {
-        return getString(KEY_FOLDER_BROWSER_INITIAL_DIR);
+        return getString(KEY_FOLDER_BROWSER_INITIAL_DIR, "");
     }
 
     private static final String KEY_FOLDER_BROWSER_FILES_SORT_ORDER = "folder_browser_files_sort_order";
@@ -344,6 +318,7 @@ public class SettingsManager {
     private static final String KEY_DOWNLOAD_AUTOMATICALLY = "pref_download_artwork_auto";
     private static final String KEY_USE_GMAIL_PLACEHOLDERS = "pref_placeholders";
     private static final String KEY_QUEUE_ARTWORK = "pref_artwork_queue";
+    private static final String KEY_SONG_LIST_ARTWORK = "pref_artwork_song_list";
     private static final String KEY_CROP_ARTWORK = "pref_crop_artwork";
     public static final String KEY_IGNORE_MEDIASTORE_ART = "pref_ignore_mediastore_artwork";
     public static final String KEY_IGNORE_EMBEDDED_ARTWORK = "pref_ignore_embedded_artwork";
@@ -428,7 +403,6 @@ public class SettingsManager {
         return getBool(KEY_SEARCH_ALBUMS, true);
     }
 
-
     // Changelog
 
     private static final String KEY_VERSION_CODE = "version_code";
@@ -451,6 +425,16 @@ public class SettingsManager {
         return getBool(KEY_CHANGELOG_SHOW_ON_LAUNCH, true);
     }
 
+    // Playback
+
+    public boolean getRememberShuffle() {
+        return getBool(KEY_PREF_REMEMBER_SHUFFLE, false);
+    }
+
+    public void setRememberShuffle(boolean rememberShuffle) {
+        setBool(KEY_PREF_REMEMBER_SHUFFLE, rememberShuffle);
+    }
+
     // Library Controller
 
     private static final String KEY_DEFAULT_PAGE = "default_page";
@@ -462,5 +446,36 @@ public class SettingsManager {
 
     public void setDefaultPageType(@CategoryItem.Type int type) {
         setInt(KEY_DEFAULT_PAGE, type);
+    }
+
+    // Legacy Upgrade Preference
+    private static final String KEY_UPGRADED = "pref_theme_gold";
+
+    public boolean getIsLegacyUpgraded() {
+        return getBool(KEY_UPGRADED, false);
+    }
+
+    // Recently added
+
+    private static final String KEY_NUM_WEEKS = "numweeks";
+
+    public int getNumWeeks() {
+        return getInt(KEY_NUM_WEEKS, 2);
+    }
+
+    public void setNumWeeks(int weeks) {
+        setInt(KEY_NUM_WEEKS, weeks);
+    }
+
+
+
+    // Song List
+
+    public boolean showArtworkInSongList() {
+        return getBool(KEY_SONG_LIST_ARTWORK, true);
+    }
+
+    public void setShowArtworkInSongList(boolean showArtworkInSongList){
+        setBool(KEY_SONG_LIST_ARTWORK, showArtworkInSongList);
     }
 }

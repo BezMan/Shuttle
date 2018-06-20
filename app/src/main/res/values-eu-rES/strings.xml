@@ -171,13 +171,14 @@ abesti ilarara gehituak.</item>
     <string name="fav_add">Gogokoa</string>
     <!-- Context menu item -->
     <string name="play_selection">Erreproduzitu</string>
-    <!-- Multi select menu item-->
+    <!-- Menu item-->
     <string name="menu_add_to">Gehitu...</string>
     <!-- Multi select menu item-->
     <string name="menu_playlist">Zerrenda</string>
     <!-- Multi select menu item-->
     <string name="menu_queue">Ilara</string>
-    <!-- Context menu item -->
+    <!-- Artist overflow menu item-->
+    <string name="menu_album_shuffle">Albumak nahastu</string>
     <!-- Context menu item -->
     <string name="new_playlist">Berria</string>
     <!-- menu item to save the current list as a new playlist -->
@@ -227,6 +228,7 @@ abesti ilarara gehituak.</item>
     <string name="pref_category_navigation">Nabigazioa</string>
     <!--Settings category for 'other' items -->
     <string name="pref_category_other">Bestelakoak</string>
+    <!--Settings category for 'playback' items -->
     <!--Settings title for opening the dialog to pick which categories are shown as tab headings -->
     <string name="pref_title_choose_tabs">Erlaitzeko elementuak aukeratu</string>
     <!--Settings summary for opening the dialog to pick which categories are shown as tab headings -->
@@ -320,6 +322,10 @@ abesti ilarara gehituak.</item>
     <!-- Settings summary for gmail style placeholders checkbox-->
     <string name="pref_summary_placeholders">\'Gmail\' estiloko karatulak erakusten ditu berez.
 Desaktibatzen bada, Shuttle-en ikonoa erabiliko da bere ordez</string>
+    <!-- Settings title for the enable lockscreen controls checkbox -->
+    <string name="pref_title_lockscreen">Blokeo-pantailaren karatula aktibatu</string>
+    <!-- Settings summary for the enable lockscreen controls checkbox -->
+    <string name="pref_summary_lockscreen">Blokeo-pantailako karatulak aktibatu/desaktibatzen ditu</string>
     <!-- Settings title for the Display heading -->
     <string name="pref_title_display">Pantaila</string>
     <!-- Settings title for the keep screen on checkbox -->
@@ -364,6 +370,11 @@ Desaktibatzen bada, Shuttle-en ikonoa erabiliko da bere ordez</string>
     <string name="pref_title_changelog">Aldaketa log-a</string>
     <!-- Settings title for the Support heading -->
     <string name="pref_title_support">Laguntza</string>
+    <!-- Settings title for toggling between remaining time and total time -->
+    <!-- Settings summary for toggling between remaining time and total time -->
+    <!-- Settings title for the playback options -->
+    <!-- Settings title for toggling 'remember shuff'e-->
+    <!-- Settings summary for toggling 'remember shuff'e-->
     <string name="pref_title_version">Bertsioa</string>
     <string name="pref_title_faq">FAQ</string>
     <string name="pref_summary_faq">Galdera bat daukazu? Sakatu hemen FAQ-a www.shuttlemusicplayer.com-en ikusteko</string>
@@ -421,9 +432,7 @@ Desaktibatzen bada, Shuttle-en ikonoa erabiliko da bere ordez</string>
     <!-- Button text for saving tags  -->
     <string name="save">Gorde</string>
     <!-- Message displayed when tag editing fails -->
-    <string name="tag_edit_error">Errorea etiketak editatzen.</string>
-    <string name="tag_error_lollipop">Errorea etiketak editatzen. Fitxategia SD txartelean badago, Shuttle-ek sartze baimenak eduki ez ditzake.</string>
-    <string name="tag_error_kitkat">Errorea etiketak editatzen. Fitxategia SD txartel batean dago? Orduan, Google-ek etiketa editatzea ezinezkoa egin du fitxategi honetarako.</string>
+    <string name="tag_error">Errorea etiketak editatzen.</string>
     <string name="tag_editor_document_tree_message">Android 5.0 bertsioan aldaketak direla eta, Google-ek orain zein SD txarteleko karpetak editatzeko baimena eman behar diozu app bati.\n\nShuttle-ek orain fitxategi aukeratzaile bat zabalduko du. Mesedez aukeratu modifikatu nahi dituzun fitxategien karpeta aita.</string>
     <string name="tag_editor_check_permission">Baimenak egiaztatzen. Honek denbora asko eraman dezake...\n\nGoogle-en errua!</string>
     <string name="tag_editor_document_tree_permission_failed">Dirudienez Shuttle-ek oraindik ez ditu fitxategiak editatzeko baimenik. Begiratu karpeta fitxategi aukeratzailean.</string>
@@ -448,6 +457,7 @@ karpeta</item>
     <string name="parent_folder">Karpeta gurasoa</string>
     <!-- -->
     <string name="show_filenames">Fitxategi izenak erakutsi</string>
+    <!-- -->
     <!-- 'Scan'-->
     <string name="scan_file">Bilaketa</string>
     <!-- Scan Complete-->
@@ -724,66 +734,7 @@ karpeta</item>
     <string name="shortcut_playlist_long_label">Gogokoenen erreprodukzio-zerrenda zabaldu</string>
     <!-- "Playlist" Shortcut label disabled. Possibly shows if the playlist has been deleted.-->
     <string name="shortcut_playlist_disabled">Zerrenda ez dago eskuragarri</string>
-    <!-- Displayed when an M3U playlist is being saved, but it already exists -->
-    <string name="playlist_save_exists">Erreprodukzio zerrenda jada existizen da</string>
-    <plurals name="NNNtracksdeleted">
-        <item quantity="one">Abesti bat ezabatua izan da.</item>
-        <item quantity="other"><xliff:g id="songs_to_delete">%d</xliff:g> abesti ezabatuak izan dira.</item>
-    </plurals>
-    <plurals name="NNNtrackstofavourites">
-        <item quantity="one">Abesti bat gogokoetara gehitua.</item>
-        <item quantity="other"><xliff:g example="27" id="number">%d</xliff:g> abesti gogokoetara gehituak.</item>
-    </plurals>
-    <!-- Displays when a restart is required due to a change (themes etc) -->
-    <string name="restart_tite">Berrabiarazpena beharrezkoa</string>
-    <!-- Displays when a restart is required due to a change (themes etc) -->
-    <string name="restart_message">Aldaketa hauek ez dira ikusiko Shuttle berrabiarazi arte</string>
-    <!-- Displayed in the color picker dialog, to choose a 'custom' color -->
-    <string name="dialog_custom">Pertsonalizatua</string>
-    <!-- Context menu item -->
-    <string name="add_to_playlist">Zerrenda</string>
-    <!-- Context menu item to remove the selected item from the playlist -->
-    <string name="remove_from_playlist">Zerrendatik kendu</string>
-    <!-- -->
-    <string name="share_title">Banatu</string>
-    <!-- Playlist context menu item to delete the selected playlist. -->
-    <string name="delete_playlist_menu">Ezabatu</string>
-    <!--Settings title for white accent color) -->
-    <string name="pref_title_theme_white_accent">Azentu zuria erabili</string>
-    <!--Settings summary for white accent color-->
-    <string name="pref_summary_theme_white_accent">Zuria erabiltzen du kolore azentu guztientzako, egoera azaldu behar dutenak ezik (nahastu eta errepikatu zuriaren beste kolore bat behar dute piztuta daudela adierazteko).</string>
-    <!--Settings category for 'notification' items -->
-    <string name="pref_category_notif_drawer">Notifikazio kaxa</string>
-    <!-- Settings title for inverting the notification drawer text & icons -->
-    <string name="pref_title_invert_notif_icons">Notifikazio Ikonoak/Testua irauli</string>
-    <!--Settings summary for the downloading more themes -->
-    <string name="pref_summary_get_pro_themes">Gai gehiago daude eskuragarri Shuttle+entzako</string>
-    <!--Settings title for clearing whitelist-->
-    <string name="pref_title_update_whitelist">Eguneratu</string>
-    <!-- Settings title for the enable lockscreen controls checkbox -->
-    <string name="pref_title_lockscreen">Blokeo-pantailaren karatula aktibatu</string>
-    <!-- Settings summary for the enable lockscreen controls checkbox -->
-    <string name="pref_summary_lockscreen">Blokeo-pantailako karatulak aktibatu/desaktibatzen ditu</string>
-    <!-- Settings title for the About heading -->
-    <string name="pref_title_about">Aldaketak</string>
-    <!-- Sleep timer "set" -->
-    <string name="sleep_timer_set">Ezarri</string>
-    <!-- Sleep timer "Set time..." -->
-    <string name="sleep_timer_set_time">Ezarri denbora...</string>
-    <!-- Default name of artist that doesn't have a name in the metadata -->
-    <string name="unknown_artist_name">Artista ezezaguna</string>
-    <!-- Default name of album artist that doesn't have a name in the metadata -->
-    <string name="unknown_album_name">Album ezezaguna</string>
-    <!-- Default name of genre that doesn't have a name in the metadata -->
-    <string name="unknown_genre_name">Genero ezezaguna</string>
-    <!-- Default name of album artist that doesn't have a name in the metadata -->
-    <string name="unknown_album_artist_name">Album-artista ezezaguna</string>
-    <!-- Accessibility button description -->
-    <string name="btn_queue">Erreprodukzio ilara ikusi</string>
-    <!-- Accessibility button description -->
-    <string name="btn_show_queue">Ilara ikusi</string>
-    <!-- Accessibility 'show lyrics' -->
-    <string name="btn_show_lyrics">Hitzak ikusi</string>
-    <string name="toast_purchase_failed">Zerbait txarto joan da. Mesedez saiatu berriz geroago...</string>
-    <string name="search_title_only">Izennburua bakarrik</string>
+    <!-- Displayed at the top of the album list, album shuffle mode-->
+    <string name="shuffle_albums">Albumak nahastu</string>
+    <!-- Storage Access Framework (Used when deleting files from SD CarD)-->
 </resources>

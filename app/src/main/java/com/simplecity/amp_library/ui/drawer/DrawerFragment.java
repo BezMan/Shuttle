@@ -3,10 +3,12 @@ package com.simplecity.amp_library.ui.drawer;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -14,9 +16,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.Rx;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.annimon.stream.Stream;
 import com.bignerdranch.expandablerecyclerview.model.Parent;
 import com.bumptech.glide.Glide;
@@ -24,6 +28,7 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.simplecity.amp_library.R;
 import com.simplecity.amp_library.ShuttleApplication;
+import com.simplecity.amp_library.dagger.module.ActivityModule;
 import com.simplecity.amp_library.dagger.module.FragmentModule;
 import com.simplecity.amp_library.model.Playlist;
 import com.simplecity.amp_library.model.Song;
@@ -34,17 +39,13 @@ import com.simplecity.amp_library.ui.views.PlayerViewAdapter;
 import com.simplecity.amp_library.utils.LogUtils;
 import com.simplecity.amp_library.utils.PlaceholderProvider;
 import com.simplecity.amp_library.utils.SleepTimer;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
+import com.simplecity.amp_library.utils.menu.playlist.PlaylistMenuCallbacksAdapter;
+import com.simplecity.amp_library.utils.menu.playlist.PlaylistMenuUtils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.inject.Inject;
 
 public class DrawerFragment extends BaseFragment implements
         DrawerView,
@@ -89,17 +90,18 @@ public class DrawerFragment extends BaseFragment implements
     @Inject
     PlayerPresenter playerPresenter;
 
-    @Inject DrawerPresenter drawerPresenter;
+    @Inject
+    DrawerPresenter drawerPresenter;
 
-    private RequestManager requestManager;
+    RequestManager requestManager;
 
-    private Drawable backgroundPlaceholder;
+    Drawable backgroundPlaceholder;
 
     private CompositeDisposable disposables = new CompositeDisposable();
 
-    private Unbinder unbinder;
-
     private List<Parent<DrawerChild>> drawerParents;
+
+    private PlaylistMenuCallbacksAdapter playlistMenuCallbacksAdapter = new PlaylistMenuCallbacksAdapter(this, disposables);
 
     public DrawerFragment() {
     }
@@ -109,6 +111,7 @@ public class DrawerFragment extends BaseFragment implements
         super.onCreate(savedInstanceState);
 
         ShuttleApplication.getInstance().getAppComponent()
+                .plus(new ActivityModule(getActivity()))
                 .plus(new FragmentModule(this))
                 .inject(this);
 
@@ -120,14 +123,6 @@ public class DrawerFragment extends BaseFragment implements
         requestManager = Glide.with(this);
 
         backgroundPlaceholder = ContextCompat.getDrawable(getContext(), R.drawable.ic_drawer_header_placeholder);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        rootView = inflater.inflate(R.layout.fragment_drawer, container, false);
-
-        unbinder = ButterKnife.bind(this, rootView);
 
         playlistDrawerParent = DrawerParent.playlistsParent;
 
@@ -141,13 +136,22 @@ public class DrawerFragment extends BaseFragment implements
         drawerParents.add(DrawerParent.settingsParent);
         drawerParents.add(DrawerParent.supportParent);
 
-        Stream.of(drawerParents)
-                .filter(parent -> parent instanceof DrawerParent)
-                .forEach(parent -> ((DrawerParent) parent).setListener(this));
-
         adapter = new DrawerAdapter(drawerParents);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        if (rootView == null) {
+            rootView = inflater.inflate(R.layout.fragment_drawer, container, false);
+
+            ButterKnife.bind(this, rootView);
+
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        }
+        if (recyclerView.getAdapter() != adapter) {
+            recyclerView.setAdapter(adapter);
+        }
 
         setDrawerItemSelected(selectedDrawerParent);
 
@@ -155,7 +159,7 @@ public class DrawerFragment extends BaseFragment implements
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         drawerPresenter.bindView(this);
@@ -169,7 +173,12 @@ public class DrawerFragment extends BaseFragment implements
         disposables.add(Aesthetic.get(getContext())
                 .colorPrimary()
                 .compose(Rx.distinctToMainThread())
-                .subscribe(color -> backgroundPlaceholder.setColorFilter(color, PorterDuff.Mode.MULTIPLY)));
+                .subscribe(color -> {
+                    backgroundPlaceholder.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+                    if (mediaManager.getSong() == null) {
+                        backgroundImage.setImageDrawable(backgroundPlaceholder);
+                    }
+                }));
 
         playerPresenter.updateTrackInfo();
 
@@ -194,11 +203,19 @@ public class DrawerFragment extends BaseFragment implements
                                 }),
                         throwable -> LogUtils.logException(TAG, "Error observing sleep state", throwable))
         );
+
+        Stream.of(drawerParents)
+                .filter(parent -> parent instanceof DrawerParent)
+                .forEach(parent -> ((DrawerParent) parent).setListener(this));
     }
 
     @Override
     public void onPause() {
         disposables.clear();
+
+        Stream.of(drawerParents)
+                .filter(parent -> parent instanceof DrawerParent)
+                .forEach(parent -> ((DrawerParent) parent).setListener(null));
 
         super.onPause();
     }
@@ -207,11 +224,6 @@ public class DrawerFragment extends BaseFragment implements
     public void onDestroyView() {
         drawerPresenter.unbindView(this);
         playerPresenter.unbindView(playerViewAdapter);
-        unbinder.unbind();
-
-        Stream.of(drawerParents)
-                .filter(parent -> parent instanceof DrawerParent)
-                .forEach(parent -> ((DrawerParent) parent).setListener(null));
 
         super.onDestroyView();
     }
@@ -228,14 +240,38 @@ public class DrawerFragment extends BaseFragment implements
         outState.putSerializable(STATE_SELECTED_PLAYLIST, currentSelectedPlaylist);
     }
 
+    void onPlaylistClicked(Playlist playlist) {
+        drawerPresenter.onPlaylistClicked(playlist);
+    }
+
     @Override
-    public void setItems(List<DrawerChild> drawerChildren) {
+    public void setPlaylistItems(List<Playlist> playlists) {
 
         int parentPosition = adapter.getParentList().indexOf(playlistDrawerParent);
 
         int prevItemCount = playlistDrawerParent.children.size();
         playlistDrawerParent.children.clear();
         adapter.notifyChildRangeRemoved(parentPosition, 0, prevItemCount);
+
+        List<DrawerChild> drawerChildren = Stream.of(playlists)
+                .map(playlist -> {
+                    DrawerChild drawerChild = new DrawerChild(playlist);
+                    drawerChild.setListener(new DrawerChild.ClickListener() {
+                        @Override
+                        public void onClick(Playlist playlist) {
+                            onPlaylistClicked(playlist);
+                        }
+
+                        @Override
+                        public void onOverflowClick(View view, Playlist playlist) {
+                            PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+                            PlaylistMenuUtils.INSTANCE.setupPlaylistMenu(popupMenu, playlist);
+                            popupMenu.setOnMenuItemClickListener(PlaylistMenuUtils.INSTANCE.getPlaylistPopupMenuClickListener(mediaManager, playlist, playlistMenuCallbacksAdapter));
+                            popupMenu.show();
+                        }
+                    });
+                    return drawerChild;
+                }).toList();
 
         playlistDrawerParent.children.addAll(drawerChildren);
         adapter.notifyChildRangeInserted(parentPosition, 0, drawerChildren.size());
@@ -254,11 +290,26 @@ public class DrawerFragment extends BaseFragment implements
     @Override
     public void setDrawerItemSelected(@DrawerParent.Type int type) {
         Stream.of(adapter.getParentList())
-                .filter(parent -> parent instanceof DrawerParent)
-                .map(parent -> ((DrawerParent) parent))
-                .forEach(drawerParent -> drawerParent.setSelected(drawerParent.type == type));
+                .forEachIndexed((i, drawerParent) -> {
+                    if (drawerParent instanceof DrawerParent) {
+                        if (((DrawerParent) drawerParent).type == type) {
+                            if (!((DrawerParent) drawerParent).isSelected()) {
+                                ((DrawerParent) drawerParent).setSelected(true);
+                                adapter.notifyParentChanged(i);
+                            }
+                        } else {
+                            if (((DrawerParent) drawerParent).isSelected()) {
+                                ((DrawerParent) drawerParent).setSelected(false);
+                                adapter.notifyParentChanged(i);
+                            }
+                        }
+                    }
+                });
+    }
 
-        adapter.notifyParentRangeChanged(0, adapter.getParentList().size());
+    @Override
+    public void showUpgradeDialog(MaterialDialog dialog) {
+        dialog.show();
     }
 
     PlayerViewAdapter playerViewAdapter = new PlayerViewAdapter() {
@@ -275,6 +326,7 @@ public class DrawerFragment extends BaseFragment implements
 
             requestManager.load(song)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .centerCrop()
                     .error(backgroundPlaceholder)
                     .into(backgroundImage);
 
@@ -292,6 +344,11 @@ public class DrawerFragment extends BaseFragment implements
                 trackNameView.setVisibility(View.VISIBLE);
                 artistNameView.setVisibility(View.VISIBLE);
             }
+        }
+
+        @Override
+        public void showUpgradeDialog(MaterialDialog dialog) {
+            dialog.show();
         }
     };
 

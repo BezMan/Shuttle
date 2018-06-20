@@ -2,20 +2,20 @@ package com.simplecity.amp_library.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Handler;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.simplecity.amp_library.R;
 import com.simplecity.amp_library.rx.UnsafeAction;
-
-import java.util.concurrent.TimeUnit;
-
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
+import java.util.concurrent.TimeUnit;
 
 public final class SleepTimer {
 
@@ -137,10 +137,22 @@ public final class SleepTimer {
                 .customView(customView, false)
                 .positiveText(R.string.button_ok)
                 .negativeText(R.string.cancel)
+                .autoDismiss(false)
                 .onPositive((materialDialog, dialogAction) -> {
-                    start(Integer.parseInt(editText.getText().toString()) * 60, playToEnd);
-                    timerStarted.run();
+                    if (!TextUtils.isEmpty(editText.getText())) {
+                        start(Integer.parseInt(editText.getText().toString()) * 60, playToEnd);
+                        timerStarted.run();
+                        materialDialog.dismiss();
+                    }
+                })
+                .onNegative((materialDialog, dialogAction) -> {
+                    materialDialog.dismiss();
                 })
                 .show();
+
+        new Handler().post(() -> {
+            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+        });
     }
 }

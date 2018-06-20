@@ -3,13 +3,13 @@ package com.simplecity.amp_library.utils;
 import android.os.Environment;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
-
+import com.simplecity.amp_library.R;
 import com.simplecity.amp_library.interfaces.FileType;
 import com.simplecity.amp_library.model.BaseFileObject;
 import com.simplecity.amp_library.model.FileObject;
 import com.simplecity.amp_library.model.FolderObject;
 import com.simplecity.amp_library.model.TagInfo;
-
+import com.simplecity.amp_library.utils.sorting.SortManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,7 +64,6 @@ public class FileBrowser {
                     if (!folderObjects.contains(baseFileObject)) {
                         folderObjects.add(baseFileObject);
                     }
-
                 } else {
                     baseFileObject = new FileObject();
                     baseFileObject.path = FileHelper.getPath(file);
@@ -127,7 +126,7 @@ public class FileBrowser {
             }
         }
 
-        dir = getRootDir();
+        dir = new File("/");
 
         files = dir.list((dir1, filename) -> dir1.isDirectory() && filename.toLowerCase().contains("storage"));
 
@@ -159,10 +158,6 @@ public class FileBrowser {
         }
 
         return dir;
-    }
-
-    public File getRootDir() {
-        return new File("/");
     }
 
     public void sortFolderObjects(List<BaseFileObject> baseFileObjects) {
@@ -206,6 +201,48 @@ public class FileBrowser {
         }
     }
 
+    public void clearHomeDir() {
+        SettingsManager.getInstance().setFolderBrowserInitialDir("");
+    }
+
+    public void setHomeDir() {
+        SettingsManager.getInstance().setFolderBrowserInitialDir(currentDir.getPath());
+    }
+
+    public File getHomeDir() {
+        return new File(SettingsManager.getInstance().getFolderBrowserInitialDir());
+    }
+
+    public boolean hasHomeDir() {
+        return !TextUtils.isEmpty(getHomeDir().getPath());
+    }
+
+    public boolean atHomeDirectory() {
+        final File currDir = getCurrentDir();
+        final File homeDir = getHomeDir();
+        return currDir != null && homeDir != null && currDir.compareTo(homeDir) == 0;
+    }
+
+    public int getHomeDirIcon() {
+        int icon = R.drawable.ic_folder_outline;
+        if (atHomeDirectory()) {
+            icon = R.drawable.ic_folder_remove;
+        } else if (hasHomeDir()) {
+            icon = R.drawable.ic_folder_nav;
+        }
+        return icon;
+    }
+
+    public int getHomeDirTitle() {
+        int title = R.string.set_home_dir;
+        if (atHomeDirectory()) {
+            title = R.string.remove_home_dir;
+        } else if (hasHomeDir()) {
+            title = R.string.nav_home_dir;
+        }
+        return title;
+    }
+
     private Comparator sizeComparator() {
         return (Comparator<BaseFileObject>) (lhs, rhs) -> (int) (rhs.size - lhs.size);
     }
@@ -214,9 +251,9 @@ public class FileBrowser {
         return (Comparator<BaseFileObject>) (lhs, rhs) -> lhs.name.compareToIgnoreCase(rhs.name);
     }
 
-//    private Comparator durationComparator() {
-//        return (Comparator<FileObject>) (lhs, rhs) -> (int) (rhs.duration - lhs.duration);
-//    }
+    //    private Comparator durationComparator() {
+    //        return (Comparator<FileObject>) (lhs, rhs) -> (int) (rhs.duration - lhs.duration);
+    //    }
 
     private Comparator trackNumberComparator() {
         return (Comparator<FileObject>) (lhs, rhs) -> lhs.tagInfo.trackNumber - rhs.tagInfo.trackNumber;
@@ -260,5 +297,4 @@ public class FileBrowser {
     <T extends Comparable<T>> int nullCompare(T a, T b) {
         return a == null ? (b == null ? 0 : Integer.MIN_VALUE) : (b == null ? Integer.MAX_VALUE : a.compareTo(b));
     }
-
 }

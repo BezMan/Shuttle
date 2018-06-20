@@ -2,17 +2,12 @@ package com.simplecity.amp_library.model;
 
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
-import android.widget.Toast;
-
-import com.simplecity.amp_library.BuildConfig;
 import com.simplecity.amp_library.R;
 import com.simplecity.amp_library.ShuttleApplication;
 import com.simplecity.amp_library.http.HttpClient;
@@ -20,17 +15,16 @@ import com.simplecity.amp_library.http.itunes.ItunesResult;
 import com.simplecity.amp_library.http.lastfm.LastFmResult;
 import com.simplecity.amp_library.sql.SqlUtils;
 import com.simplecity.amp_library.sql.providers.PlayCountTable;
+import com.simplecity.amp_library.sql.sqlbrite.SqlBriteUtils;
 import com.simplecity.amp_library.utils.ArtworkUtils;
 import com.simplecity.amp_library.utils.ComparisonUtils;
 import com.simplecity.amp_library.utils.FileHelper;
-import com.simplecity.amp_library.utils.LogUtils;
 import com.simplecity.amp_library.utils.StringUtils;
-
+import io.reactivex.Single;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
-
 import retrofit2.Call;
 
 public class Song implements
@@ -79,7 +73,7 @@ public class Song implements
     private String sortKey;
 
     public static String[] getProjection() {
-        return new String[]{
+        return new String[] {
                 MediaStore.Audio.Media._ID,
                 MediaStore.Audio.Media.DATA,
                 MediaStore.Audio.Media.TITLE,
@@ -153,10 +147,14 @@ public class Song implements
         setArtworkKey();
     }
 
-    public Genre getGenre() {
+    public Song(){
+
+    }
+
+    public Single<Genre> getGenre() {
         Query query = Genre.getQuery();
         query.uri = MediaStore.Audio.Genres.getContentUriForAudioId("external", (int) id);
-        return SqlUtils.createSingleQuery(ShuttleApplication.getInstance(), Genre::new, query);
+        return SqlBriteUtils.createSingle(ShuttleApplication.getInstance(), Genre::new, query, null);
     }
 
     public int getPlayCount(Context context) {
@@ -170,7 +168,7 @@ public class Song implements
 
             Query query = new Query.Builder()
                     .uri(appendedUri)
-                    .projection(new String[]{PlayCountTable.COLUMN_ID, PlayCountTable.COLUMN_PLAY_COUNT})
+                    .projection(new String[] { PlayCountTable.COLUMN_ID, PlayCountTable.COLUMN_PLAY_COUNT })
                     .build();
 
             playCount = SqlUtils.createSingleQuery(context, cursor ->
@@ -245,7 +243,12 @@ public class Song implements
 
     public String getSampleRateLabel() {
         if (sampleRateLabel == null) {
-            sampleRateLabel = ((float) getTagInfo().sampleRate) / 1000 + ShuttleApplication.getInstance().getString(R.string.song_info_sample_rate_suffix);
+            int sampleRate = getTagInfo().sampleRate;
+            if (sampleRate == -1) {
+                sampleRateLabel = "Unknown";
+                return sampleRateLabel;
+            }
+            sampleRateLabel = ((float) sampleRate) / 1000 + ShuttleApplication.getInstance().getString(R.string.song_info_sample_rate_suffix);
         }
         return sampleRateLabel;
     }
@@ -312,22 +315,6 @@ public class Song implements
                 .build();
     }
 
-    public void share(Context context) {
-        try {
-            final Intent intent = new Intent(Intent.ACTION_SEND).setType("audio/*");
-            Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", new File(path));
-            intent.putExtra(Intent.EXTRA_STREAM, uri);
-            context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_via)));
-        } catch (IllegalArgumentException e) {
-            LogUtils.logException(TAG, "Failed to share track", e);
-
-            // Todo: Once this issue is resolved, remove toast message.
-            if (BuildConfig.VERSION_NAME.contains("beta")) {
-                Toast.makeText(context, "Something went wrong sharing the song. Bad developer. This issue has been logged.", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -360,6 +347,7 @@ public class Song implements
     }
 
     @Override
+    @NonNull
     public String getArtworkKey() {
         if (artworkKey == null) setArtworkKey();
         return artworkKey;
@@ -412,19 +400,5 @@ public class Song implements
     @Override
     public int compareTo(@NonNull Song song) {
         return ComparisonUtils.compare(getSortKey(), song.getSortKey());
-    }
-
-    public boolean delete() {
-
-        if (path == null) return false;
-
-        boolean success = false;
-
-        File file = new File(path);
-        if (file.exists()) {
-            success = file.delete();
-        }
-
-        return success;
     }
 }

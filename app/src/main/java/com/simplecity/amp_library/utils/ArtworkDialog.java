@@ -8,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.annimon.stream.Stream;
 import com.mlsdev.rximagepicker.RxImageConverters;
@@ -26,15 +25,13 @@ import com.simplecity.amp_library.ui.recyclerview.SpacesItemDecoration;
 import com.simplecityapps.recycler_adapter.adapter.ViewModelAdapter;
 import com.simplecityapps.recycler_adapter.model.ViewModel;
 import com.simplecityapps.recycler_adapter.recyclerview.RecyclerListener;
-
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class ArtworkDialog {
 
@@ -119,8 +116,10 @@ public class ArtworkDialog {
                 .subscribe(files -> {
                     adapter.removeItem(adapter.items.indexOf(folderView));
                     if (files != null) {
-                        Stream.of(files).filter(file -> userSelectedArtwork == null || !file.getPath().equals(userSelectedArtwork.path)).forEach(file ->
-                                adapter.addItem(new ArtworkView(ArtworkProvider.Type.FOLDER, artworkProvider, glideListener, file, false)));
+                        Stream.of(files)
+                                .filter(file -> userSelectedArtwork == null || !file.getPath().equals(userSelectedArtwork.path))
+                                .forEach(file ->
+                                        adapter.addItem(new ArtworkView(ArtworkProvider.Type.FOLDER, artworkProvider, glideListener, file, false)));
                     }
                 }, error -> LogUtils.logException(TAG, "Error getting artwork files", error));
 
@@ -139,7 +138,8 @@ public class ArtworkDialog {
                         values.put(CustomArtworkTable.COLUMN_PATH, artworkModel.file == null ? null : artworkModel.file.getPath());
                         context.getContentResolver().insert(CustomArtworkTable.URI, values);
 
-                        ShuttleApplication.getInstance().userSelectedArtwork.put(artworkProvider.getArtworkKey(), new UserSelectedArtwork(artworkModel.type, artworkModel.file == null ? null : artworkModel.file.getPath()));
+                        ShuttleApplication.getInstance().userSelectedArtwork.put(artworkProvider.getArtworkKey(),
+                                new UserSelectedArtwork(artworkModel.type, artworkModel.file == null ? null : artworkModel.file.getPath()));
                     } else {
                         context.getContentResolver().delete(CustomArtworkTable.URI, CustomArtworkTable.COLUMN_KEY + "='" + artworkProvider.getArtworkKey().replaceAll("'", "\''") + "'", null);
                         ShuttleApplication.getInstance().userSelectedArtwork.remove(artworkProvider.getArtworkKey());

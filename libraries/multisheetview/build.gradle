@@ -1,30 +1,22 @@
+import dependencies.Dependencies
+
 buildscript {
     repositories {
         mavenCentral()
     }
-    dependencies {
-        classpath gradlePlugins.retroLambda
-    }
 }
 
-apply plugin: 'com.android.library'
-apply plugin: 'me.tatarka.retrolambda'
+apply plugin: Dependencies.BuildPlugins.androidLibrary
 
 android {
-    compileSdkVersion versions.compileSdk
-    buildToolsVersion versions.buildTools
+    compileSdkVersion Dependencies.compileSdk
+    buildToolsVersion Dependencies.buildTools
 
     defaultConfig {
-        minSdkVersion versions.minSdk
-        targetSdkVersion versions.targetSdk
+        minSdkVersion Dependencies.minSdk
+        targetSdkVersion Dependencies.targetSdk
         versionCode 1
         versionName "1.0"
-
-        // Used to enable Java8 features
-        compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_8
-            targetCompatibility JavaVersion.VERSION_1_8
-        }
     }
     buildTypes {
         release {
@@ -32,11 +24,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-
-    compile libs.appcompat
-    compile libs.design
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation Dependencies.Google.appcompat
+    implementation Dependencies.Google.design
 }

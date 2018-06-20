@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- ## Toast Messages ## -->
     <!-- Shown when a user attempts to edit tags, but they don't have a 'DocumentProvider' available to pick the directory of their music (and thus give permission to Shuttle)-->
-    <string name="R.string.toast_no_document_provider">Недоступен провайдер документов, чтобы выдать разрешение на запрос</string>
+    <string name="R.string.toast_no_document_provider">Провайдер документов недоступен, чтобы предоставить разрешение на запрос</string>
     <!-- Displayed when an M3U playlist is being saved, but it already exists -->
     <!-- Displayed when an M3U playlist save fails -->
     <string name="playlist_save_failed">Невозможно сохранить плей-лист</string>
@@ -99,12 +99,12 @@
     <string name="upgraded_title">Спасибо</string>
     <string name="upgraded_message">Вы успешно обновились до Shuttle+. Спасибо за Вашу поддержку!
 \n\nПожалуйста, перезапустите приложение чтобы включить все функции</string>
-    <string name="upgrade_dialog_message">Обновление откроет дополнительные функции в Shuttle, включая:
-\n\n• Много дополнительных тем
-\n• Редактор тэгов (функциональность ограничена в Android 4.4 Kit-Kat)
-\n• Встроенный проводник
-\n• Поддержка ChromeCast
-\n\nТакже это поддержит дальнейшую разработку.\n\nВам не нужно обновляться, если вы уже купили Shuttle+</string>
+    <string name="upgrade_dialog_message">• Поддержка ChromeCast
+\n• Дополнительные темы
+\n• Редактор тэгов
+\n• Просмотр папок
+\n• Поддержка разработки ❤️</string>
+    <string name="upgrade_required_folders">Обновиться до Shuttle+</string>
     <string name="btn_upgrade">Обновить</string>
     <!-- -->
     <string name="get_pro_button_no">Спасибо, не надо</string>
@@ -121,7 +121,7 @@
     <!-- Delete confirmation dialog message when deleting artists -->
     <string name="delete_album_artist_desc_multiple">Все песни следующих исполнителей:<xliff:g id="album-artist">%s</xliff:g> будут безвозвратно удалены</string>
     <!-- Delete confirmation dialog when deleting an entire album -->
-    <string name="delete_album_desc">Весь альбом <xliff:g id="album">%s</xliff:g> будет безвозвратно удалён.</string>
+    <string name="delete_album_desc">Все песни из альбома <xliff:g id="album">%s</xliff:g> будут безвозвратно удалены.</string>
     <!-- Delete confirmation dialog message when deleting albums -->
     <string name="get_pro_button_play_store">Play Маркет</string>
     <string name="get_pro_button_amazon">Amazon</string>
@@ -131,9 +131,9 @@
     <!-- Delete confirmation dialog message title when deleting songs -->
     <string name="delete_song_desc_multiple">Следующие песни:<xliff:g id="song">%s</xliff:g> будут безвозвратно удалены.</string>
     <!-- Toast shown when songs are successfully deleted -->
-    <string name="delete_songs_success_toast"><xliff:g id="number">%d</xliff:g> песни (-ен) удалены</string>
+    <string name="delete_songs_success_toast">Треки удалены: <xliff:g id="number">%d</xliff:g></string>
     <!-- Toast shown when failing to delete songs-->
-    <string name="delete_songs_failure_toast">Невозможно удалить песни</string>
+    <string name="delete_songs_failure_toast">Невозможно удалить треки</string>
     <!-- Delete confirmation dialog, confirmation button text -->
     <string name="button_ok">Да</string>
     <!-- -->
@@ -177,13 +177,14 @@
     <string name="fav_add">Избранное</string>
     <!-- Context menu item -->
     <string name="play_selection">Воспроизвести</string>
-    <!-- Multi select menu item-->
+    <!-- Menu item-->
     <string name="menu_add_to">Добавить в...</string>
     <!-- Multi select menu item-->
     <string name="menu_playlist">Плейлист</string>
     <!-- Multi select menu item-->
     <string name="menu_queue">Очередь</string>
-    <!-- Context menu item -->
+    <!-- Artist overflow menu item-->
+    <string name="menu_album_shuffle">Перемешать альбом</string>
     <!-- Context menu item -->
     <string name="new_playlist">Создать</string>
     <!-- menu item to save the current list as a new playlist -->
@@ -192,7 +193,7 @@
     <!-- Context menu item to remove the selected item from the queue -->
     <string name="remove_from_queue">Удалить</string>
     <!-- Context menu item -->
-    <string name="play_next">Воспроизвести следующующим</string>
+    <string name="play_next">Играть следующим</string>
     <!-- Menu text for the settings item -->
     <string name="settings">Настройки</string>
     <!-- Playing screen, menu item -->
@@ -233,6 +234,8 @@
     <string name="pref_category_navigation">Навигация</string>
     <!--Settings category for 'other' items -->
     <string name="pref_category_other">Другое</string>
+    <!--Settings category for 'playback' items -->
+    <string name="pref_category_playback">Воспроизведние</string>
     <!--Settings title for opening the dialog to pick which categories are shown as tab headings -->
     <string name="pref_title_choose_tabs">Выбрать отображаемые закладки</string>
     <!--Settings summary for opening the dialog to pick which categories are shown as tab headings -->
@@ -324,7 +327,11 @@
     <!-- Settings title for gmail style placeholders checkbox-->
     <string name="pref_title_placeholders">Использовать иконки в стиле Gmail</string>
     <!-- Settings summary for gmail style placeholders checkbox-->
-    <string name="pref_summary_placeholders">Использовать иконки в стиле \'Gmail\' по умолчанию. Если отключено, будет использоваться иконка Shuttle</string>
+    <string name="pref_summary_placeholders">Заполнять значки в стиле \'Gmail\'. Если отключено, будут использоваться значки Shuttle без заполнения</string>
+    <!-- Settings title for the enable lockscreen controls checkbox -->
+    <string name="pref_title_lockscreen">Включить показ обложки на экране блокировки</string>
+    <!-- Settings summary for the enable lockscreen controls checkbox -->
+    <string name="pref_summary_lockscreen">Включает/отключает управление, информацию и обложку альбома, когда экран заблокирован.</string>
     <!-- Settings title for the Display heading -->
     <string name="pref_title_display">Экран</string>
     <!-- Settings title for the keep screen on checkbox -->
@@ -371,6 +378,16 @@
     <string name="pref_title_changelog">Список изменений</string>
     <!-- Settings title for the Support heading -->
     <string name="pref_title_support">Поддержка</string>
+    <!-- Settings title for toggling between remaining time and total time -->
+    <string name="pref_title_display_remaining_time">Показывать оставшееся время</string>
+    <!-- Settings summary for toggling between remaining time and total time -->
+    <string name="pref_summary_display_remaining_time">Показывать оставшееся время вместо продолжительности на экране «Сейчас воспроизводится»</string>
+    <!-- Settings title for the playback options -->
+    <string name="pref_title_playback">Воспроизведение</string>
+    <!-- Settings title for toggling 'remember shuff'e-->
+    <string name="pref_title_remember_shuffle">Запомнить режим перемешивания</string>
+    <!-- Settings summary for toggling 'remember shuff'e-->
+    <string name="pref_summary_remember_shuffle">Режим перемешивания не отключается при воспроизведении нового списка песен</string>
     <string name="pref_title_version">Версия</string>
     <string name="pref_title_faq">Часто задаваемые вопросы</string>
     <string name="pref_summary_faq">Есть вопросы? Нужна помощь? Нажмите сюда для просмотра FAQ на www.shuttlemusicplayer.com</string>
@@ -428,9 +445,7 @@
     <!-- Button text for saving tags  -->
     <string name="save">Сохранить</string>
     <!-- Message displayed when tag editing fails -->
-    <string name="tag_edit_error">Ошибка при редактировании тегов</string>
-    <string name="tag_error_lollipop">Случилась ошибка при редактировании тегов. Если файл расположен на SD карте, Shuttle может не иметь разрешения на доступ к нему.</string>
-    <string name="tag_error_kitkat">Случилась ошибка при редактировании тегов. Файл расположен на SD карте? Если так, то Google сделал невозможным редактирование тегов этого файла.</string>
+    <string name="tag_error">Невозможно отредактировать теги. Если вы используете Kitkat, и файлы находятся на SD-карте, редактирование тегов невозможно. Это связано с изменениями в политике безопасности Google.</string>
     <string name="tag_editor_document_tree_message">Вследствие изменений в Android 5.0 Вам необходимо установить, какие папки на SD карте приложению можно модифицировать.\n\nСейчас Shuttle откроет окно проводника. Пожалуйста, выберите начальную директорию, содержащую файлы, какие Вы хотите модифицировать.</string>
     <string name="tag_editor_check_permission">Проверка разрешений. Это может отнять некоторое время...\n\nБлагодарите Google!</string>
     <string name="tag_editor_document_tree_permission_failed">Похоже, Shuttle всё ещё не имеет разрешения модифицировать файлы. Проверьте директорию в окне проводника.</string>
@@ -448,21 +463,22 @@
     <string name="onefolder">1 папка</string>
     <plurals name="Nfolders">
         <item quantity="other"><xliff:g id="count">%d</xliff:g> 
-папок</item>
+папки</item>
         <item quantity="few">"
 <xliff:g id="count">%d</xliff:g> 
-папок"</item>
+папки"</item>
         <item quantity="many"><xliff:g id="count">%d</xliff:g> 
 папок</item>
         <item quantity="one">"
             <xliff:g id="count">%d</xliff:g>
-            папки (-ок)
+            папка
         "</item>
     </plurals>
     <!-- -->
     <string name="parent_folder">Родительская папка</string>
     <!-- -->
     <string name="show_filenames">Отображать имена файлов</string>
+    <!-- -->
     <!-- 'Scan'-->
     <string name="scan_file">Сканирование</string>
     <!-- Scan Complete-->
@@ -633,7 +649,7 @@
     <!-- Default value if album year unknown -->
     <string name="unknown_year">Неизвестный год</string>
     <!-- Song info overflow option-->
-    <string name="song_info">Информация</string>
+    <string name="song_info">Информация о песне</string>
     <!-- Artwork Download Service Label-->
     <string name="download_service">Сервис загрузки</string>
     <!-- Accessibility button description -->
@@ -737,70 +753,7 @@
     <string name="shortcut_playlist_long_label">Открыть избранный плейлист</string>
     <!-- "Playlist" Shortcut label disabled. Possibly shows if the playlist has been deleted.-->
     <string name="shortcut_playlist_disabled">Плейлист недоступен</string>
-    <!-- Displayed when an M3U playlist is being saved, but it already exists -->
-    <string name="playlist_save_exists">Плейлист уже существует</string>
-    <plurals name="NNNtracksdeleted">
-        <item quantity="one">1 песня удалена.</item>
-        <item quantity="other">Удалено композиций: <xliff:g id="SONGS_TO_DELETE">%d</xliff:g>.</item>
-        <item quantity="few"><xliff:g id="songs_to_delete">%d</xliff:g> песни удалены.</item>
-        <item quantity="many"><xliff:g id="songs_to_delete">%d</xliff:g> песен удалено.</item>
-    </plurals>
-    <plurals name="NNNtrackstofavourites">
-        <item quantity="one">1 песня добавлена в избранное.</item>
-        <item quantity="other"><xliff:g example="18" id="number">%d</xliff:g>  песен добавлено в плейлист.</item>
-        <item quantity="few"><xliff:g example="27" id="number">%d</xliff:g> песни добавлены в избранное.</item>
-        <item quantity="many"><xliff:g example="27" id="number">%d</xliff:g> песен добавлены в избранное.</item>
-    </plurals>
-    <!-- Displays when a restart is required due to a change (themes etc) -->
-    <string name="restart_tite">Необходим перезапуск</string>
-    <!-- Displays when a restart is required due to a change (themes etc) -->
-    <string name="restart_message">Изменения не встутят в силу до перезапуска</string>
-    <!-- Displayed in the color picker dialog, to choose a 'custom' color -->
-    <string name="dialog_custom">Свой</string>
-    <!-- Context menu item -->
-    <string name="add_to_playlist">Плейлист</string>
-    <!-- Context menu item to remove the selected item from the playlist -->
-    <string name="remove_from_playlist">Удалить из плейлиста</string>
-    <!-- -->
-    <string name="share_title">Поделиться</string>
-    <!-- Playlist context menu item to delete the selected playlist. -->
-    <string name="delete_playlist_menu">Удалить с диска</string>
-    <!--Settings title for white accent color) -->
-    <string name="pref_title_theme_white_accent">Использовать белый акцент</string>
-    <!--Settings summary for white accent color-->
-    <string name="pref_summary_theme_white_accent">Использование белого цвета во всех акцентах, кроме задействованных в отображении состояния (перемешивание и повтор нуждаются в цвете, отличном от белого, для индикации активации)</string>
-    <!--Settings category for 'notification' items -->
-    <string name="pref_category_notif_drawer">Панель уведомления</string>
-    <!-- Settings title for inverting the notification drawer text & icons -->
-    <string name="pref_title_invert_notif_icons">Инвертировать иконки/текст на панели уведомлений</string>
-    <!--Settings summary for the downloading more themes -->
-    <string name="pref_summary_get_pro_themes">Больше тем доступно в Shuttle+</string>
-    <!--Settings title for clearing whitelist-->
-    <string name="pref_title_update_whitelist">Обновить</string>
-    <!-- Settings title for the enable lockscreen controls checkbox -->
-    <string name="pref_title_lockscreen">Включить показ обложки на экране блокировки</string>
-    <!-- Settings summary for the enable lockscreen controls checkbox -->
-    <string name="pref_summary_lockscreen">Включает/отключает управление, информацию и обложку альбома, когда экран заблокирован.</string>
-    <!-- Settings title for the About heading -->
-    <string name="pref_title_about">Список изменений</string>
-    <!-- Sleep timer "set" -->
-    <string name="sleep_timer_set">Установить</string>
-    <!-- Sleep timer "Set time..." -->
-    <string name="sleep_timer_set_time">Установить время...</string>
-    <!-- Default name of artist that doesn't have a name in the metadata -->
-    <string name="unknown_artist_name">Неизвестный исполнитель</string>
-    <!-- Default name of album artist that doesn't have a name in the metadata -->
-    <string name="unknown_album_name">Неизвестный альбом</string>
-    <!-- Default name of genre that doesn't have a name in the metadata -->
-    <string name="unknown_genre_name">Неизвестный жанр</string>
-    <!-- Default name of album artist that doesn't have a name in the metadata -->
-    <string name="unknown_album_artist_name">Неизвестный исполнитель альбома</string>
-    <!-- Accessibility button description -->
-    <string name="btn_queue">Показать очередь воспроизведения</string>
-    <!-- Accessibility button description -->
-    <string name="btn_show_queue">Просмотреть очередь</string>
-    <!-- Accessibility 'show lyrics' -->
-    <string name="btn_show_lyrics">Показать тексты</string>
-    <string name="toast_purchase_failed">Что-то пошло не так. Пожалуйста, попробуйте позже...</string>
-    <string name="search_title_only">Только название</string>
+    <!-- Displayed at the top of the album list, album shuffle mode-->
+    <string name="shuffle_albums">Перемешать альбом</string>
+    <!-- Storage Access Framework (Used when deleting files from SD CarD)-->
 </resources>

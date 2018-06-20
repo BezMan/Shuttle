@@ -1,33 +1,21 @@
 package com.simplecity.amp_library.ui.modelviews;
 
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.github.florent37.glidepalette.GlidePalette;
 import com.simplecity.amp_library.format.PrefixHighlighter;
 import com.simplecity.amp_library.model.Album;
 import com.simplecity.amp_library.ui.adapters.ViewType;
 import com.simplecity.amp_library.utils.PlaceholderProvider;
+import com.simplecity.amp_library.utils.sorting.SortManager;
 import com.simplecity.amp_library.utils.StringUtils;
-
 import java.util.Arrays;
 import java.util.List;
-
-import static android.support.v4.view.ViewCompat.setTransitionName;
-import static android.text.TextUtils.isEmpty;
-import static com.bumptech.glide.load.engine.DiskCacheStrategy.ALL;
-import static com.github.florent37.glidepalette.BitmapPalette.Profile.MUTED_DARK;
-import static com.github.florent37.glidepalette.GlidePalette.with;
-import static com.simplecity.amp_library.R.string.btn_options;
-import static com.simplecity.amp_library.ui.adapters.ViewType.ALBUM_PALETTE;
-import static com.simplecity.amp_library.utils.SortManager.AlbumSort.ARTIST_NAME;
-import static com.simplecity.amp_library.utils.SortManager.AlbumSort.DEFAULT;
-import static com.simplecity.amp_library.utils.SortManager.AlbumSort.NAME;
-import static com.simplecity.amp_library.utils.SortManager.AlbumSort.YEAR;
-import static com.simplecity.amp_library.utils.SortManager.getInstance;
-import static com.simplecity.amp_library.utils.StringUtils.keyFor;
-import static java.lang.String.valueOf;
 
 public class AlbumView extends MultiItemView<AlbumView.ViewHolder, Album> implements SectionedView {
 
@@ -72,19 +60,19 @@ public class AlbumView extends MultiItemView<AlbumView.ViewHolder, Album> implem
         this.prefix = prefix;
     }
 
-    private void onItemClick(int position, ViewHolder holder) {
+    void onItemClick(int position, ViewHolder holder) {
         if (listener != null) {
             listener.onAlbumClick(position, this, holder);
         }
     }
 
-    private void onOverflowClick(View v) {
+    void onOverflowClick(View v) {
         if (listener != null) {
             listener.onAlbumOverflowClicked(v, album);
         }
     }
 
-    private boolean onAlbumLongclick(int position) {
+    boolean onAlbumLongclick(int position) {
         if (listener != null) {
             return listener.onAlbumLongClick(position, this);
         }
@@ -102,11 +90,6 @@ public class AlbumView extends MultiItemView<AlbumView.ViewHolder, Album> implem
 
     public void setViewType(int viewType) {
         this.viewType = viewType;
-    }
-
-    @Override
-    public Album getItem() {
-        return album;
     }
 
     @Override
@@ -131,30 +114,30 @@ public class AlbumView extends MultiItemView<AlbumView.ViewHolder, Album> implem
             holder.lineTwo.setText(album.albumArtistName);
         }
 
-        if (getViewType() == ALBUM_PALETTE) {
+        if (getViewType() == ViewType.ALBUM_PALETTE) {
             if (holder.bottomContainer != null) {
                 holder.bottomContainer.setBackgroundColor(0x20000000);
             }
         }
 
         requestManager.load(album)
-                .listener(getViewType() == ALBUM_PALETTE ? with(album.getArtworkKey())
-                        .use(MUTED_DARK)
+                .listener(getViewType() == ViewType.ALBUM_PALETTE ? GlidePalette.with(album.getArtworkKey())
+                        .use(GlidePalette.Profile.MUTED_DARK)
                         .intoBackground(holder.bottomContainer)
                         .crossfade(true)
                         : null)
-                .diskCacheStrategy(ALL)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(PlaceholderProvider.getInstance().getPlaceHolderDrawable(album.name, false))
                 .into(holder.imageOne);
 
-        holder.overflowButton.setContentDescription(holder.itemView.getResources().getString(btn_options, album.name));
+        holder.overflowButton.setContentDescription(holder.itemView.getResources().getString(com.simplecity.amp_library.R.string.btn_options, album.name));
 
         if (prefixHighlighter != null) {
             prefixHighlighter.setText(holder.lineOne, prefix);
             prefixHighlighter.setText(holder.lineTwo, prefix);
         }
 
-        setTransitionName(holder.imageOne, album.getArtworkKey());
+        ViewCompat.setTransitionName(holder.imageOne, album.getArtworkKey());
     }
 
     @Override
@@ -174,23 +157,28 @@ public class AlbumView extends MultiItemView<AlbumView.ViewHolder, Album> implem
     }
 
     @Override
+    public int getSpanSize(int spanCount) {
+        return 1;
+    }
+
+    @Override
     public String getSectionName() {
 
-        int sortOrder = getInstance().getAlbumsSortOrder();
+        int sortOrder = SortManager.getInstance().getAlbumsSortOrder();
         String string = null;
         boolean requiresSubstring = true;
         switch (sortOrder) {
-            case DEFAULT:
-                string = keyFor(album.name);
+            case SortManager.AlbumSort.DEFAULT:
+                string = StringUtils.keyFor(album.name);
                 break;
-            case NAME:
+            case SortManager.AlbumSort.NAME:
                 string = album.name;
                 break;
-            case ARTIST_NAME:
+            case SortManager.AlbumSort.ARTIST_NAME:
                 string = album.albumArtistName;
                 break;
-            case YEAR:
-                string = valueOf(album.year);
+            case SortManager.AlbumSort.YEAR:
+                string = String.valueOf(album.year);
                 if (string.length() != 4) {
                     string = "-";
                 } else {
@@ -201,7 +189,7 @@ public class AlbumView extends MultiItemView<AlbumView.ViewHolder, Album> implem
         }
 
         if (requiresSubstring) {
-            if (!isEmpty(string)) {
+            if (!TextUtils.isEmpty(string)) {
                 string = string.substring(0, 1).toUpperCase();
             } else {
                 string = " ";
@@ -220,7 +208,6 @@ public class AlbumView extends MultiItemView<AlbumView.ViewHolder, Album> implem
 
         if (viewType != albumView.viewType) return false;
         return album != null ? album.equals(albumView.album) : albumView.album == null;
-
     }
 
     @Override

@@ -3,12 +3,10 @@ package com.simplecity.amp_library.ui.drawer;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-
 import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
 import com.bignerdranch.expandablerecyclerview.ParentViewHolder;
 import com.bignerdranch.expandablerecyclerview.model.Parent;
 import com.simplecity.amp_library.R;
-
 import java.util.List;
 
 public class DrawerAdapter extends ExpandableRecyclerAdapter<Parent<DrawerChild>, DrawerChild, ParentViewHolder<Parent<DrawerChild>, DrawerChild>, DrawerChild.ChildHolder> {
@@ -66,6 +64,12 @@ public class DrawerAdapter extends ExpandableRecyclerAdapter<Parent<DrawerChild>
 
     @Override
     public void onBindChildViewHolder(@NonNull DrawerChild.ChildHolder childViewHolder, int parentPosition, int childPosition, @NonNull DrawerChild drawerChild) {
-        getParentList().get(parentPosition).getChildList().get(childPosition).bindView(childViewHolder);
+        List<Parent<DrawerChild>> parentList = getParentList();
+        if (parentPosition >= 0 && !parentList.isEmpty() && parentPosition < parentList.size()) {
+            List<DrawerChild> childList = parentList.get(parentPosition).getChildList();
+            if (childPosition >= 0 && !childList.isEmpty() && childPosition < childList.size()) {
+                childList.get(childPosition).bindView(childViewHolder);
+            }
+        }
     }
 }

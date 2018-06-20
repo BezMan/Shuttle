@@ -1,7 +1,6 @@
 package com.simplecity.amp_library.ui.drawer;
 
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -13,7 +12,8 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.afollestad.aesthetic.Aesthetic;
 import com.bignerdranch.expandablerecyclerview.ParentViewHolder;
 import com.bignerdranch.expandablerecyclerview.model.Parent;
@@ -21,24 +21,25 @@ import com.simplecity.amp_library.R;
 import com.simplecity.amp_library.utils.ShuttleUtils;
 import com.simplecity.amp_library.utils.StringUtils;
 import com.simplecity.amp_library.utils.TypefaceManager;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class DrawerParent implements Parent<DrawerChild> {
 
     private static final String TAG = "DrawerParent";
 
     static DrawerParent libraryParent = new DrawerParent(DrawerParent.Type.LIBRARY, R.string.library_title, R.drawable.ic_library_music_24dp, NavigationEventRelay.librarySelectedEvent, true);
-    static DrawerParent folderParent = new DrawerParent(DrawerParent.Type.FOLDERS, R.string.folders_title, R.drawable.ic_folder_multiple_24dp, NavigationEventRelay.foldersSelectedEvent, true);
     static DrawerParent playlistsParent = new DrawerParent(DrawerParent.Type.PLAYLISTS, R.string.playlists_title, R.drawable.ic_queue_music_24dp, null, true);
     static DrawerParent sleepTimerParent = new DrawerParent(Type.SLEEP_TIMER, R.string.sleep_timer, R.drawable.ic_sleep_24dp, NavigationEventRelay.sleepTimerSelectedEvent, false);
     static DrawerParent equalizerParent = new DrawerParent(Type.EQUALIZER, R.string.equalizer, R.drawable.ic_equalizer_24dp, NavigationEventRelay.equalizerSelectedEvent, false);
     static DrawerParent settingsParent = new DrawerParent(DrawerParent.Type.SETTINGS, R.string.settings, R.drawable.ic_settings_24dp, NavigationEventRelay.settingsSelectedEvent, false);
     static DrawerParent supportParent = new DrawerParent(DrawerParent.Type.SUPPORT, R.string.pref_title_support, R.drawable.ic_help_24dp, NavigationEventRelay.supportSelectedEvent, false);
+    static DrawerParent folderParent = new DrawerParent(DrawerParent.Type.FOLDERS, R.string.folders_title, R.drawable.ic_folder_multiple_24dp, NavigationEventRelay.foldersSelectedEvent, true) {
+        @Override
+        public boolean isSelectable() {
+            return ShuttleUtils.isUpgraded();
+        }
+    };
 
     public @interface Type {
         int LIBRARY = 0;
@@ -50,7 +51,7 @@ public class DrawerParent implements Parent<DrawerChild> {
         int SUPPORT = 6;
     }
 
-    boolean selectable = true;
+    private boolean selectable = true;
 
     public interface ClickListener {
         void onClick(DrawerParent drawerParent);
@@ -66,11 +67,14 @@ public class DrawerParent implements Parent<DrawerChild> {
     @DrawerParent.Type
     public int type;
 
-    @Nullable NavigationEventRelay.NavigationEvent navigationEvent;
+    @Nullable
+    NavigationEventRelay.NavigationEvent navigationEvent;
 
-    @StringRes private int titleResId;
+    @StringRes
+    private int titleResId;
 
-    @DrawableRes private int iconResId;
+    @DrawableRes
+    private int iconResId;
 
     List<DrawerChild> children = new ArrayList<>();
 
@@ -97,6 +101,10 @@ public class DrawerParent implements Parent<DrawerChild> {
         return false;
     }
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
     public void setSelected(boolean selected) {
         isSelected = selected;
     }
@@ -109,16 +117,14 @@ public class DrawerParent implements Parent<DrawerChild> {
         this.timeRemaining = timeRemaining;
     }
 
+    public boolean isSelectable() {
+        return selectable;
+    }
+
     void onClick() {
         if (listener != null && type != Type.PLAYLISTS) {
             listener.onClick(this);
         }
-    }
-
-    Drawable getDrawable(Context context) {
-        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, iconResId));
-        DrawableCompat.setTint(drawable, isSelected ? Aesthetic.get(context).colorPrimary().blockingFirst() : Aesthetic.get(context).textColorPrimary().blockingFirst());
-        return drawable;
     }
 
     public void bindView(ParentHolder holder) {
@@ -131,7 +137,7 @@ public class DrawerParent implements Parent<DrawerChild> {
 
         holder.expandableIcon.setVisibility(getChildList().isEmpty() ? View.GONE : View.VISIBLE);
 
-        holder.icon.setImageDrawable(getDrawable(holder.itemView.getContext()));
+        holder.icon.setImageResource(iconResId);
         if (iconResId != -1) {
             holder.icon.setVisibility(View.VISIBLE);
         } else {
@@ -152,9 +158,7 @@ public class DrawerParent implements Parent<DrawerChild> {
 
         if (type == DrawerParent.Type.FOLDERS && !ShuttleUtils.isUpgraded()) {
             holder.itemView.setAlpha(0.4f);
-            holder.itemView.setEnabled(false);
         } else {
-            holder.itemView.setEnabled(true);
             holder.itemView.setAlpha(1.0f);
         }
 
